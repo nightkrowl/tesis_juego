@@ -195,6 +195,56 @@ def new_game():
         pygame.display.update()
 
 
+def add_to_highscore(self):
+    if not os.path.exists('playername.txt'):
+        playername_file = open('playername.txt', 'w')
+        playername_file.write("Player")
+        playername_file.close()
+    playername_file = open('playername.txt', 'r')
+    playername = playername_file.readline()
+    playername.rstrip()
+    playername_file.close()
+    
+    now = datetime.datetime.now()
+    
+    highscore = open('highscores.txt', 'a')
+    highscore.write(str(now.year)+"-" + str(now.month) + "-" + str(now.day) + " " + str(now.hour).zfill(2) + ":" +  str(now.minute) + " " + str(playername) + " scored " + str(self.score) + "\n")
+    highscore.close()
+
+def high_score(points):
+    # Default high score
+    high_score = 0
+     
+    # Try to read the high score from a file
+    try:
+        f = open("high_score.txt", "r")
+        high_score = int(f.read() )
+        f.close()
+        print ("La puntacion es", high_score)
+    except:
+        # Error reading file, no high score
+        print("Aun no hay puntuaciones")
+         
+    # Get the score from the current game
+    current_score = points
+         
+    # See if we have a new high score
+    if current_score > high_score:
+        print ("Nuevo record añadido")
+         
+        # We do! Save to disk 
+        try:     
+            # Write the file to disk   
+            f = open("high_score.txt","w")
+            f.write(str(current_score))
+            f.close()
+        except:
+            # Hm, can't write it.
+            print("no se pudo salvar")
+    else:
+        print("Sigue participando.")
+
+
 def options():
     print "Mustra opciones."
 
