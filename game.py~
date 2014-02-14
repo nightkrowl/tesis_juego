@@ -1,3 +1,4 @@
+#Hecho por obed Guevara
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -137,21 +138,11 @@ def new_game():
 
     x_click = 0
     y_click = 0
-    x_click2 = 0
-    y_click2 = 0
-    x_click3 = 0
-    y_click3 = 0
-    
 
     x_alien = 0
     y_alien = randint(0, 304)
-    x_alien2 = 0
-    y_alien2 = randint(0, 304)
-    x_alien3 = 0
-    y_alien3 = randint(0, 304)
 
     points = 0
-    level = 0
     velocity = 2
     errorState = False
 
@@ -170,15 +161,9 @@ def new_game():
         position = (x_pos - 40, y_pos - 40)
         
         x_alien += 1
-        x_alien2 += 1
-        x_alien3 += 1
         if x_alien * velocity > 600 and not errorState:
             x_alien = 0
             y_alien = randint(0, 304)
-            x_alien2 = 0
-            y_alien2 = randint(0, 304)
-            x_alien3 = 0
-            y_alien3 = randint(0, 304)
             lose.play()
             pygame.mixer.music.stop()
             main()
@@ -190,32 +175,17 @@ def new_game():
 
         screen.blit(pygame.image.load("images/background_game.png"), (0, 0))
         screen.blit(pygame.font.SysFont("tahoma", 30).render("Puntos: " + str(points), True, black), (450, 350))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(level), True, black), (450, 320))
 
-        if (x_click in range(x_alien * velocity - 30, x_alien * velocity + 30) and y_click in range(y_alien - 30, y_alien + 30)) or (x_click2 in range(x_alien2 * velocity - 30, x_alien2 * velocity + 30) and y_click2 in range(y_alien2 - 30, y_alien2 + 30)) or (x_click3 in range(x_alien3 * velocity - 30, x_alien3 * velocity + 30) and y_click3 in range(y_alien3 - 30, y_alien3 + 30)):
+        if x_click in range(x_alien * velocity - 30, x_alien * velocity + 30) and y_click in range(y_alien - 30, y_alien + 30):
             shot = pygame.mixer.Sound("sound/Shotgun.wav")
             shot.play()
 
-            points += 5
+            points += 1
             velocity += 1
             x_alien = 0
             y_alien = randint(50, 304)
-            x_alien2 = 0
-            y_alien2 = randint(50, 304)
-            x_alien3 = 0
-            y_alien3 = randint(50, 304)
-            if points == 20:
-                level += 1
-                velocity = 2
-                points = 0
         screen.blit(pygame.image.load("images/alien.png").convert_alpha(), (x_alien * velocity, y_alien))
-
-        if  level >= 1:
-            screen.blit(pygame.image.load("images/alien.png").convert_alpha(), (x_alien2 * velocity, y_alien2))
         
-        if  level >= 3:
-            screen.blit(pygame.image.load("images/alien.png").convert_alpha(), (x_alien3 * velocity, y_alien3))
-
         if errorState:
             x_alien = -40
             y_alien = -40     
@@ -224,8 +194,55 @@ def new_game():
 
         pygame.display.update()
 
-def highscore():
-    print "Puntos"
+
+def add_to_highscore(self):
+    if not os.path.exists('playername.txt'):
+        playername_file = open('playername.txt', 'w')
+        playername_file.write("Player")
+        playername_file.close()
+    playername_file = open('playername.txt', 'r')
+    playername = playername_file.readline()
+    playername.rstrip()
+    playername_file.close()
+    
+    now = datetime.datetime.now()
+    
+    highscore = open('highscores.txt', 'a')
+    highscore.write(str(now.year)+"-" + str(now.month) + "-" + str(now.day) + " " + str(now.hour).zfill(2) + ":" +  str(now.minute) + " " + str(playername) + " scored " + str(self.score) + "\n")
+    highscore.close()
+
+def high_score(points):
+    # Default high score
+    high_score = 0
+     
+    # Try to read the high score from a file
+    try:
+        f = open("high_score.txt", "r")
+        high_score = int(f.read() )
+        f.close()
+        print ("La puntacion es", high_score)
+    except:
+        # Error reading file, no high score
+        print("Aun no hay puntuaciones")
+         
+    # Get the score from the current game
+    current_score = points
+         
+    # See if we have a new high score
+    if current_score > high_score:
+        print ("Nuevo record añadido")
+         
+        # We do! Save to disk 
+        try:     
+            # Write the file to disk   
+            f = open("high_score.txt","w")
+            f.write(str(current_score))
+            f.close()
+        except:
+            # Hm, can't write it.
+            print("no se pudo salvar")
+    else:
+        print("Sigue participando.")
 
 
 def options():
@@ -276,7 +293,6 @@ def main():
         ("Jugar", new_game),
         ("Opciones", options),
         ("Creditos", credits),
-        ("Puntuacion", highscore),
         ("Salir", exit_game)
         ]
 
@@ -298,4 +314,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
