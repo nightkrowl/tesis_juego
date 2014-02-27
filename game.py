@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from random import randint
 import pygame
 import sys
@@ -121,6 +120,8 @@ class Menu:
 
         for opcion in self.opciones:
             opcion.imprimir(screen)
+
+#Se trabajara aun con este, sera el framework
 
 def new_game():
     pygame.mixer.music.stop()
