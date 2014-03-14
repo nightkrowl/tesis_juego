@@ -124,101 +124,105 @@ class Menu:
             opcion.imprimir(screen)
 
 def other_game():
-    	pygame.mixer.music.stop()
-	push = pygame.mixer.Sound("sound/menuok.wav")
-	pygame.mixer.music.load("sound/mega.mp3")
-	pygame.mixer.music.play()
+        pygame.mixer.music.stop()
+    push = pygame.mixer.Sound("sound/menuok.wav")
+    pygame.mixer.music.load("sound/mega.mp3")
+    pygame.mixer.music.play()
     
-	ncelx =  5 
-	ncely =  4
-	cellsize = 80
+    ncelx =  5 
+    ncely =  4
+        vidas =  6
+    cellsize = 80
 
-	set_ = list("abcdefghijkl") 
+    set_ = list("abcdefghijkl") 
 
-	verde = pygame.Color("green")
-	gris   = pygame.Color("grey20")
-	negro   = pygame.Color("black")
-	blanco  = pygame.Color("white")
-	
-	pygame.mixer.init(44100, -16, 2, 1024)
-	pygame.mixer.music.set_volume(0.8)
+    verde = pygame.Color("green")
+    gris   = pygame.Color("grey20")
+    negro   = pygame.Color("black")
+    blanco  = pygame.Color("white")
 
-	def play_again():
-	    pygame.mixer.music.stop()
-	    main()
-	    #texto = police.render('click para jugar otra vez',1,gris,verde)
-	    #pygame.display.update(scr.blit(texto,texto.get_rect(center=scrrect.center)))
-	    #while True:
-		#e = pygame.event.wait()
-		#if e.type   == pygame.MOUSEBUTTONDOWN: return True
-		#elif e.type == pygame.QUIT: return False
+    pygame.mixer.init(44100, -16, 2, 1024)
+    pygame.mixer.music.set_volume(0.8)
 
-	def draw_hidden():
-	    scr.fill(verde)
-	    for y in range(0,scrrect.h,cellsize):
-		for x in range(0,scrrect.w,cellsize):
-		    scr.fill(negro,(x+1,y+1,cellsize-2,cellsize-2))
-	    pygame.display.flip()
+    def play_again():
+        pygame.mixer.music.stop()
+        main()
+        #texto = police.render('click para jugar otra vez',1,gris,verde)
+        #pygame.display.update(scr.blit(texto,texto.get_rect(center=scrrect.center)))
+        #while True:
+        #e = pygame.event.wait()
+        #if e.type   == pygame.MOUSEBUTTONDOWN: return True
+        #elif e.type == pygame.QUIT: return False
 
-	def make_set():
-	    nb_cartas = (ncelx*ncely)//2
-	    cartas = set_*int(nb_cartas//len(set_))
-	    cartas += set_[:nb_cartas%len(set_)]
-	    cartas *= 2
-	    shuffle(cartas)
-	    return cartas
+    def draw_hidden():
+        scr.fill(verde)
+        for y in range(0,scrrect.h,cellsize):
+        for x in range(0,scrrect.w,cellsize):
+            scr.fill(negro,(x+1,y+1,cellsize-2,cellsize-2))
+        pygame.display.flip()
 
-	scr = pygame.display.set_mode((ncelx*cellsize,ncely*cellsize))
-	scrrect = scr.get_rect()
+    def make_set():
+        nb_cartas = (ncelx*ncely)//2
+        cartas = set_*int(nb_cartas//len(set_))
+        cartas += set_[:nb_cartas%len(set_)]
+        cartas *= 2
+        shuffle(cartas)
+        return cartas
 
-	pygame.font.init()
-	police = pygame.font.Font(None,int(cellsize//1.5))
+    scr = pygame.display.set_mode((ncelx*cellsize,ncely*cellsize))
+    scrrect = scr.get_rect()
 
-	primcarta = None 
+    pygame.font.init()
+    police = pygame.font.Font(None,int(cellsize//1.5))
 
-	while True:
+    primcarta = None 
 
-	    cartas = make_set()
-	    draw_hidden()
+    while True:
 
-	    pygame.event.clear()
-	    pygame.time.set_timer(pygame.USEREVENT,1000)
-	    secondes = 0
+        cartas = make_set()
+        draw_hidden()
 
-	    while any(cartas):
-		e = pygame.event.wait()
-		if e.type == pygame.QUIT: break
-		elif e.type == pygame.USEREVENT:
-		    secondes += 1
-		    pygame.display.set_caption(str(secondes))
-		elif e.type == pygame.MOUSEBUTTONDOWN:
-		    push.play()
-		    index = e.pos[1]//cellsize*ncelx+e.pos[0]//cellsize
-		    if cartas[index] and index!=primcarta:
-		        r = scr.fill(blanco,(index%ncelx*cellsize+1,index//ncelx*cellsize+1,cellsize-2,cellsize-2))
-		        move = police.render(str(cartas[index]),1,gris)
-		        scr.blit(move,move.get_rect(center=(r.center)))
-		        pygame.display.update(r)
-		        if primcarta is None: 
-		            primcarta = index 
-		            firstr = r 
-		            continue
-		        if cartas[index] == cartas[primcarta]:
-		            scr.fill(verde,r,special_flags=pygame.BLEND_MIN)
-		            scr.fill(verde,firstr,special_flags=pygame.BLEND_MIN)
-		            pygame.time.wait(500)
-		            pygame.display.update((r,firstr))
-		            cartas[index] = cartas[primcarta] = None
-		        else:
-		            pygame.time.wait(500)
-		            pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
-		        primcarta = None
-	    else:
-		pygame.time.wait(500)
-		if play_again(): continue
-	    break
+        pygame.event.clear()
+        pygame.time.set_timer(pygame.USEREVENT,1000)
+        secondes = 0
 
-	pygame.quit()
+        while any(cartas):
+        e = pygame.event.wait()
+        if e.type == pygame.QUIT: break
+        elif e.type == pygame.USEREVENT:
+            secondes += 1
+            pygame.display.set_caption(str(secondes))
+        elif e.type == pygame.MOUSEBUTTONDOWN:
+            push.play()
+            index = e.pos[1]//cellsize*ncelx+e.pos[0]//cellsize
+            if cartas[index] and index!=primcarta:
+                r = scr.fill(blanco,(index%ncelx*cellsize+1,index//ncelx*cellsize+1,cellsize-2,cellsize-2))
+                move = police.render(str(cartas[index]),1,gris)
+                scr.blit(move,move.get_rect(center=(r.center)))
+                        vidas -= 1
+                pygame.display.update(r)
+                        if vidas == 0:
+                            play_again()
+                if primcarta is None: 
+                    primcarta = index 
+                    firstr = r 
+                    continue
+                if cartas[index] == cartas[primcarta]:
+                    scr.fill(verde,r,special_flags=pygame.BLEND_MIN)
+                    scr.fill(verde,firstr,special_flags=pygame.BLEND_MIN)
+                    pygame.time.wait(500)
+                    pygame.display.update((r,firstr))
+                    cartas[index] = cartas[primcarta] = None
+                else:
+                    pygame.time.wait(500)
+                    pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
+                primcarta = None
+        else:
+        pygame.time.wait(500)
+        if play_again(): continue
+        break
+
+    pygame.quit()
 
 def new_game():
     pygame.mixer.music.stop()
@@ -228,7 +232,7 @@ def new_game():
     black = (0, 0, 0)
     white = (255, 255, 255)
 
-    screen = pygame.display.set_mode((600, 404), 0, 32)
+    screen = pygame.display.set_mode((800, 504), 0, 32)
 
     x_pos = 0
     y_pos = 0
@@ -237,11 +241,14 @@ def new_game():
     y_click = 0
 
     x_alien = 0
-    y_alien = randint(0, 304)
+    y_alien = randint(0, 404)
     x_alien2 = 0
-    y_alien2 = randint(0, 304)
+    y_alien2 = randint(0, 404)
     x_alien3 = 0
-    y_alien3 = randint(0, 304)
+    y_alien3 = randint(0, 404)
+
+    if y_alien == y_alien2:
+        y_alien2 = randint(0, 404)
 
     points = 0
     level = 0
@@ -266,13 +273,15 @@ def new_game():
         x_alien += 1
         x_alien2 += 1
         x_alien3 += 1
-        if x_alien * velocity > 600 and not errorState:
+        if x_alien * velocity > 800 and not errorState:
             x_alien = 0
-            y_alien = randint(0, 304)
+            y_alien = randint(0, 404)
             x_alien2 = 0
-            y_alien2 = randint(0, 304)
+            y_alien2 = randint(0, 404)
             x_alien3 = 0
-            y_alien3 = randint(0, 304)
+            y_alien3 = randint(0, 404)
+            if y_alien == y_alien2:
+                y_alien2 = randint(0, 404)
             lose.play()
             pygame.mixer.music.stop()
             main()
@@ -283,10 +292,10 @@ def new_game():
         pygame.mouse.set_visible(False)
 
         screen.blit(pygame.image.load("images/background_game.png"), (0, 0))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Puntos: " + str(points), True, black), (450, 350))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(level), True, black), (450, 320))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Verde", True, black), (450, 290))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas:" + str(vidas), True, black), (450, 260))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Puntos: " + str(points), True, black), (650, 450))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(level), True, black), (650, 420))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Verde", True, black), (650, 390))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas:" + str(vidas), True, black), (650, 360))
 
         if (x_click in range(x_alien * velocity - 30, x_alien * velocity + 30) and y_click in range(y_alien - 30, y_alien + 30)):
             shot = pygame.mixer.Sound("sound/Shotgun.wav")
@@ -295,11 +304,14 @@ def new_game():
             points += 5
             velocity += 1
             x_alien = 0
-            y_alien = randint(50, 304)
+            y_alien = randint(50, 404)
             x_alien2 = 0
-            y_alien2 = randint(50, 304)
+            y_alien2 = randint(50, 404)
             x_alien3 = 0
-            y_alien3 = randint(50, 304)
+            y_alien3 = randint(50, 404)
+            if y_alien == y_alien2:
+                y_alien2 = randint(0, 404)
+            
 
         if points == 20:
             level += 1
@@ -319,11 +331,14 @@ def new_game():
             velocity += 1
             vidas -= 1
             x_alien = 0
-            y_alien = randint(50, 304)
+            y_alien = randint(50, 404)
             x_alien2 = 0
-            y_alien2 = randint(50, 304)
+            y_alien2 = randint(50, 404)
             x_alien3 = 0
-            y_alien3 = randint(50, 304)
+            y_alien3 = randint(50, 404)
+            if y_alien == y_alien2:
+                y_alien2 = randint(0, 404)
+            
 
         if (x_click in range(x_alien3 * velocity - 30, x_alien3 * velocity + 30) and y_click in range(y_alien3 - 30, y_alien3 + 30)):
             shot = pygame.mixer.Sound("sound/Shotgun.wav")
@@ -333,11 +348,14 @@ def new_game():
             vidas -= 1
             velocity += 1
             x_alien = 0
-            y_alien = randint(50, 304)
+            y_alien = randint(50, 404)
             x_alien2 = 0
-            y_alien2 = randint(50, 304)
+            y_alien2 = randint(50, 404)
             x_alien3 = 0
-            y_alien3 = randint(50, 304)
+            y_alien3 = randint(50, 404)
+            if y_alien == y_alien2:
+                y_alien2 = randint(0, 404)
+            
 
         if  level >= 1:
             screen.blit(pygame.image.load("images/azul.png").convert_alpha(), (x_alien2 * velocity, y_alien2))
@@ -403,7 +421,7 @@ def main():
 
     menu_game = [
         ("Invasores", new_game),
-	("Memorama", other_game),
+    ("Memorama", other_game),
         ("Opciones", options),
         ("Creditos", credits),
         ("Puntuacion", highscore),
