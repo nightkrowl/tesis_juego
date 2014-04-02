@@ -87,7 +87,7 @@ class Menu:
         self.total = len(self.opciones)
         self.mantiene_pulsado = False
 
-    def update(self,sound):
+    def update(self,sound,ok):
         k = pygame.key.get_pressed()
 
         if not self.mantiene_pulsado:
@@ -98,7 +98,7 @@ class Menu:
                 sound.play()
                 self.seleccionado += 1
             elif k[K_RETURN]:
-                sound.play()
+                ok.play()
                 # Invoca a la función asociada a la opción.
                 self.opciones[self.seleccionado].activar()
 
@@ -139,8 +139,9 @@ def mate_game():
     red = (255, 0, 0)
     blue = (0, 23, 69)
 
-    screen = pygame.display.set_mode((400, 400), 0, 32)
-    
+    screen = pygame.display.set_mode((500, 400), 0, 32)
+
+    usuario = 0
     nivel = 1
     vidas = 3
     bien = 0
@@ -151,87 +152,79 @@ def mate_game():
     pygame.mixer.music.set_volume(0.8)
     #print "La operacion es:", a, operadores, b, "="
 
+    operadores = random.choice([operator.add, operator.sub, operator.mul, operator.div])
+
+    a=random.randint(1,10)
+    b=random.randint(1,10)
+
+    resultado = operadores(a,b)
+
+    if operadores == operator.add:
+        operadores = "+"
+        tiempo = 10
+    elif operadores == operator.sub:
+        operadores = "-"
+        tiempo = 10
+    elif operadores == operator.mul:
+        operadores = "*"
+        tiempo = 20
+    elif operadores == operator.div:
+        operadores = "/"
+        tiempo = 20
+
     while True:
-        for e in pygame.event.get():
-            if e.type == pygame.QUIT: 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 pygame.mixer.music.stop()
                 sys.exit()
-            elif e.type == pygame.KEYDOWN: 
-                if e.type == pygame.K_0: 
+            elif event.type == pygame.KEYDOWN:
+                if event.type == K_ESCAPE:
+                    sys.exit()
+                if event.type == K_0: 
                     usuario = 0
-                elif e.type == pygame.K_1: 
+                elif event.type == K_1: 
                     usuario = 1
-                elif e.type == pygame.K_2: 
+                elif event.type == K_2: 
                     usuario = 2
-                elif e.type == pygame.K_3: 
+                elif event.type == K_3: 
                     usuario = 3
-                elif e.type == pygame.K_4: 
+                elif event.type == K_4: 
                     usuario = 4  
-                elif e.type == pygame.K_5: 
+                elif event.type == K_5: 
                     usuario = 5
-                elif e.type == pygame.K_6: 
+                elif event.type == K_6: 
                     usuario = 6
-                elif e.type == pygame.K_7: 
+                elif event.type == K_7: 
                     usuario = 7
-                elif e.type == pygame.K_8: 
+                elif event.type == K_8: 
                     usuario = 8
-                elif e.type == pygame.K_9: 
+                elif event.type == K_9: 
                     usuario = 9
-    
 
-        operadores = random.choice([operator.add, operator.sub, operator.mul, operator.div])
+        screen.fill((30, 145, 255))
+        pygame.draw.line(screen, (255, 255, 255), (0, 25), (640, 25), 2)
+        
+        screen.blit(pygame.font.SysFont("tahoma", 50).render("Resuelvelo " + str(a) + str(operadores) + str(b), True, white), (100, 120))
 
-        a=random.randint(1,10)
-        b=random.randint(1,10)
 
-        resultado = operadores(a,b)
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Respuesta: " + str(usuario), True, white), (100, 240))
 
-        if operadores == operator.add:
-            operadores = "+"
-            tiempo = 10
-        elif operadores == operator.sub:
-            operadores = "-"
-            tiempo = 10
-        elif operadores == operator.mul:
-            operadores = "*"
-            tiempo = 20
-        elif operadores == operator.div:
-            operadores = "/"
-            tiempo = 20
 
         screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(nivel), True, orange), (200, 350))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas: " + str(vidas), True, black), (170, 320))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas: " + str(vidas), True, black), (200, 320))
 
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Resuelvelo " + str(a) + str(operadores) + str(b), True, white), (150, 200))
-       
-
-        screen.fill(blue)
-
-            
         while tiempo > 0:  
             tiempo -= 1 
             screen.blit(pygame.font.SysFont("tahoma", 30).render("Tiempo restante: " + str(tiempo), True, white), (80, 200))
         
             if usuario == resultado:
                 screen.blit(pygame.font.SysFont("tahoma", 30).render("BIEN! El resultado es: " + str(resultado), True, green), (150, 200))
-                while True:
-                    event = pygame.event.wait()
-                    if event.type   == pygame.K_KP_ENTER: 
-                        return True
-                    elif event.type == pygame.QUIT: 
-                        return False
                 bien += 1
                 aumento += 1
                 pygame.display.update()
 
             else:
                 screen.blit(pygame.font.SysFont("tahoma", 30).render("Incorrecto, el resultado era: " + str(resultado), True, red), (150, 200))
-                while True:
-                    event = pygame.event.wait()
-                    if event.type   == pygame.K_KP_ENTER:
-                        return True
-                    elif event.type == pygame.QUIT: 
-                        return False
                 vidas -= 1
                 break
                 pygame.display.update()
@@ -249,8 +242,10 @@ def mate_game():
             pygame.mixer.music.stop()
             main()
 
-        pygame.display.update()
 
+
+        pygame.display.update()
+     
 def memo_game():
         pygame.mixer.music.stop()
     push = pygame.mixer.Sound("sound/menuok.wav")
@@ -397,6 +392,8 @@ def inva_game():
                 x_pos, y_pos = pygame.mouse.get_pos()
             elif event.type == MOUSEBUTTONDOWN:
                 x_click, y_click = pygame.mouse.get_pos()
+                shot = pygame.mixer.Sound("sound/Shotgun.wav")
+                shot.play()
         
         position = (x_pos - 40, y_pos - 40)
         
@@ -428,8 +425,6 @@ def inva_game():
         screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas:" + str(vidas), True, black), (650, 360))
 
         if (x_click in range(x_alien * velocity - 30, x_alien * velocity + 30) and y_click in range(y_alien - 30, y_alien + 30)):
-            shot = pygame.mixer.Sound("sound/Shotgun.wav")
-            shot.play()
 
             points += 5
             velocity += 1
@@ -550,6 +545,7 @@ def main():
     print "iniciando juego"
 
     sound = pygame.mixer.Sound("sound/menumove.wav")
+    ok = pygame.mixer.Sound("sound/menuok.wav")
     pygame.mixer.music.load("sound/intro.mp3")
     pygame.mixer.music.play(-1)
 
@@ -573,7 +569,7 @@ def main():
                 sys.exit(0)
 
         screen.blit(background, (0, 0))
-        menu.update(sound)
+        menu.update(sound,ok)
         menu.imprimir(screen)
 
         pygame.display.flip()
