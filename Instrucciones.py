@@ -5,7 +5,7 @@ import pygame, sys
 from pygame.locals import *
 
 def Instrucciones(screen, text):
-    font = pygame.font.Font(filepath("fonts/font.ttf"), 16)
+    font = pygame.font.Font("font/cubicfive10.ttf", 16)
     black = pygame.Surface((640, 480))
     black.fill((0, 0, 0))
     alpha = 255
@@ -16,7 +16,7 @@ def Instrucciones(screen, text):
     y = 0
     for line in text:
         ren = font.render(line, 1, (255, 255, 255))
-        image.blit(ren, (320-ren.get_width()/2, y*(font.get_height()+3)))
+        image.blit(ren, (420-ren.get_width()/2, y*(font.get_height()+3)))
         y += 1
     while 1:
         pygame.time.wait(10)
@@ -43,6 +43,6 @@ def Instrucciones(screen, text):
         screen.fill((0, 0, 0))
         screen.blit(image, (0, 240-image.get_height()/2))
         screen.blit(black, (0, 0))
-        ren = font.render("Press Enter para continuar", 1, (255, 255, 255))
-        screen.blit(ren, (320-ren.get_width()/2, 460))
+        ren = font.render("Presione Enter para continuar", 1, (255, 255, 255))
+        screen.blit(ren, (420-ren.get_width()/2, 460))
         pygame.display.flip()
