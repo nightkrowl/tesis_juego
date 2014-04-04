@@ -8,6 +8,8 @@ from pygame.locals import *
 from random import shuffle
 import random
 import operator
+import time
+from Instrucciones import *
 
 
 size = width, height = 500, 370
@@ -126,138 +128,26 @@ class Menu:
         for opcion in self.opciones:
             opcion.imprimir(screen)
 
-
 def mate_game():
-    pygame.mixer.music.stop()
-    lose = pygame.mixer.Sound("sound/gameover.wav")
-    pygame.mixer.music.load("sound/mate_music.mp3")
-    pygame.mixer.music.play()
-    black = (0, 0, 0)
-    white = (255, 255, 255)
-    orange = (230, 95, 0) 
-    green = (127, 255, 0)
-    red = (255, 0, 0)
-    blue = (0, 23, 69)
-
-    screen = pygame.display.set_mode((500, 400), 0, 32)
-
-    usuario = 0
-    nivel = 1
-    vidas = 3
-    bien = 0
-    timepo = 0
-    aumento = 0
-
-    pygame.mixer.init(44100, -16, 2, 1024)
-    pygame.mixer.music.set_volume(0.8)
-    #print "La operacion es:", a, operadores, b, "="
-
-    operadores = random.choice([operator.add, operator.sub, operator.mul, operator.div])
-
-    a=random.randint(1,10)
-    b=random.randint(1,10)
-
-    resultado = operadores(a,b)
-
-    if operadores == operator.add:
-        operadores = "+"
-        tiempo = 10
-    elif operadores == operator.sub:
-        operadores = "-"
-        tiempo = 10
-    elif operadores == operator.mul:
-        operadores = "*"
-        tiempo = 20
-    elif operadores == operator.div:
-        operadores = "/"
-        tiempo = 20
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.mixer.music.stop()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.type == K_ESCAPE:
-                    sys.exit()
-                if event.type == K_0: 
-                    usuario = 0
-                elif event.type == K_1: 
-                    usuario = 1
-                elif event.type == K_2: 
-                    usuario = 2
-                elif event.type == K_3: 
-                    usuario = 3
-                elif event.type == K_4: 
-                    usuario = 4  
-                elif event.type == K_5: 
-                    usuario = 5
-                elif event.type == K_6: 
-                    usuario = 6
-                elif event.type == K_7: 
-                    usuario = 7
-                elif event.type == K_8: 
-                    usuario = 8
-                elif event.type == K_9: 
-                    usuario = 9
-
-        screen.fill((30, 145, 255))
-        pygame.draw.line(screen, (255, 255, 255), (0, 25), (640, 25), 2)
-        
-        screen.blit(pygame.font.SysFont("tahoma", 50).render("Resuelvelo " + str(a) + str(operadores) + str(b), True, white), (100, 120))
-
-
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Respuesta: " + str(usuario), True, white), (100, 240))
-
-
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(nivel), True, orange), (200, 350))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas: " + str(vidas), True, black), (200, 320))
-
-        while tiempo > 0:  
-            tiempo -= 1 
-            screen.blit(pygame.font.SysFont("tahoma", 30).render("Tiempo restante: " + str(tiempo), True, white), (80, 200))
-        
-            if usuario == resultado:
-                screen.blit(pygame.font.SysFont("tahoma", 30).render("BIEN! El resultado es: " + str(resultado), True, green), (150, 200))
-                bien += 1
-                aumento += 1
-                pygame.display.update()
-
-            else:
-                screen.blit(pygame.font.SysFont("tahoma", 30).render("Incorrecto, el resultado era: " + str(resultado), True, red), (150, 200))
-                vidas -= 1
-                break
-                pygame.display.update()
-
-        #if aumento == 5:
-         #   operadores.append(operator.mul)
-        #if aumento == 10:
-         #   operadores.append(operator.div)
-
-        if bien == 5:
-            nivel += 1
-            vidas += 1
-
-        if vidas == 0:
-            pygame.mixer.music.stop()
-            main()
-
-
-
-        pygame.display.update()
-     
+    #pygame.mixer.music.stop()
+    #lose = pygame.mixer.Sound("sound/gameover.wav")
+    #pygame.mixer.music.load("sound/mate_music.mp3")
+    #pygame.mixer.music.play()
+    print "Hola"
+    
 def memo_game():
-        pygame.mixer.music.stop()
+    pygame.mixer.music.stop()
     push = pygame.mixer.Sound("sound/menuok.wav")
     pygame.mixer.music.load("sound/mega.mp3")
     pygame.mixer.music.play()
     
     ncelx =  5 
     ncely =  4
-        vidas =  6
+    vidas =  20
     cellsize = 80
-
-    set_ = list("abcdefghijkl") 
+    orange = (230, 95, 0)
+    
+    set_ = list("1234567890")
 
     verde = pygame.Color("green")
     gris   = pygame.Color("grey20")
@@ -280,8 +170,8 @@ def memo_game():
     def draw_hidden():
         scr.fill(verde)
         for y in range(0,scrrect.h,cellsize):
-        for x in range(0,scrrect.w,cellsize):
-            scr.fill(negro,(x+1,y+1,cellsize-2,cellsize-2))
+            for x in range(0,scrrect.w,cellsize):
+                scr.fill(negro,(x+1,y+1,cellsize-2,cellsize-2))
         pygame.display.flip()
 
     def make_set():
@@ -310,38 +200,43 @@ def memo_game():
         secondes = 0
 
         while any(cartas):
-        e = pygame.event.wait()
-        if e.type == pygame.QUIT: break
-        elif e.type == pygame.USEREVENT:
-            secondes += 1
-            pygame.display.set_caption(str(secondes))
-        elif e.type == pygame.MOUSEBUTTONDOWN:
-            push.play()
-            index = e.pos[1]//cellsize*ncelx+e.pos[0]//cellsize
-            if cartas[index] and index!=primcarta:
-                r = scr.fill(blanco,(index%ncelx*cellsize+1,index//ncelx*cellsize+1,cellsize-2,cellsize-2))
-                move = police.render(str(cartas[index]),1,gris)
-                scr.blit(move,move.get_rect(center=(r.center)))
-                        vidas -= 1
-                pygame.display.update(r)
+            e = pygame.event.wait()
+            if e.type == pygame.QUIT: break
+            elif e.type == pygame.USEREVENT:
+                secondes += 1
+                pygame.display.set_caption(str(secondes))
+            elif e.type == pygame.MOUSEBUTTONDOWN:
+                push.play()
+                index = e.pos[1]//cellsize*ncelx+e.pos[0]//cellsize
+                if cartas[index] and index!=primcarta:
+                    r = scr.fill(blanco,(index%ncelx*cellsize+1,index//ncelx*cellsize+1,cellsize-2,cellsize-2))
+                    move = police.render(str(cartas[index]),1,gris)
+                    scr.blit(move,move.get_rect(center=(r.center)))
+                    pygame.display.update(r)
+                
+                    if primcarta is None: 
+                        primcarta = index 
+                        firstr = r 
+                        continue
+                    
+                    if cartas[index] == cartas[primcarta]:
+                        scr.fill(verde,r,special_flags=pygame.BLEND_MIN)
+                        scr.fill(verde,firstr,special_flags=pygame.BLEND_MIN)
+                        pygame.time.wait(500)
+                        pygame.display.update((r,firstr))
+                        cartas[index] = cartas[primcarta] = None
+                    
+                    else:
+                        vidas -=1
+                        pygame.time.wait(500)
+                        pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
+                        
                         if vidas == 0:
                             play_again()
-                if primcarta is None: 
-                    primcarta = index 
-                    firstr = r 
-                    continue
-                if cartas[index] == cartas[primcarta]:
-                    scr.fill(verde,r,special_flags=pygame.BLEND_MIN)
-                    scr.fill(verde,firstr,special_flags=pygame.BLEND_MIN)
-                    pygame.time.wait(500)
-                    pygame.display.update((r,firstr))
-                    cartas[index] = cartas[primcarta] = None
-                else:
-                    pygame.time.wait(500)
-                    pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
-                primcarta = None
+                    
+                    primcarta = None
         else:
-        pygame.time.wait(500)
+            pygame.time.wait(500)
         if play_again(): continue
         break
 
@@ -354,7 +249,18 @@ def inva_game():
     pygame.mixer.music.play()
     black = (0, 0, 0)
     white = (255, 255, 255)
-    clock = pygame.time.Clock()
+        
+    def Ayuda(screen):
+        Instrucciones(screen, ["CONTROLS:",
+        "",
+        "Move: Arrow Keys",
+        "Jump: Z key",
+        "Return: Escape key (ESC)",                 
+        "Music off: = S key",
+        "Music on: = P key",
+        "Advice: Jump on enemies to kill them!",
+        "Hold the Z key to extend your air time",
+        "when killing an enemy"])
 
     screen = pygame.display.set_mode((800, 504), 0, 32)
 
@@ -385,6 +291,9 @@ def inva_game():
     pygame.mixer.music.set_volume(0.8)
 
     while True:
+
+        help = Ayuda()
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
@@ -438,7 +347,6 @@ def inva_game():
             if y_alien == y_alien2:
                 y_alien2 = randint(0, 404)
             
-
         if points == 20:
             level += 1
             velocity = 1
@@ -451,8 +359,6 @@ def inva_game():
         screen.blit(pygame.image.load("images/verde.png").convert_alpha(), (x_alien * velocity, y_alien))
 
         if (x_click in range(x_alien2 * velocity - 30, x_alien2 * velocity + 30) and y_click in range(y_alien2 - 30, y_alien2 + 30)):
-            shot = pygame.mixer.Sound("sound/Shotgun.wav")
-            shot.play()
 
             points -= 5
             velocity += 1
@@ -468,9 +374,7 @@ def inva_game():
             
 
         if (x_click in range(x_alien3 * velocity - 30, x_alien3 * velocity + 30) and y_click in range(y_alien3 - 30, y_alien3 + 30)):
-            shot = pygame.mixer.Sound("sound/Shotgun.wav")
-            shot.play()
-            
+
             points -= 5
             vidas -= 1
             velocity += 1
@@ -497,9 +401,7 @@ def inva_game():
         screen.blit(pygame.image.load("images/scope.png").convert_alpha(), position)
 
         pygame.display.update()
-        clock.tick(50)
-        pygame.display.set_caption("fps: " + str(clock.get_fps()))
-
+        
 def highscore():
     print "Puntos"
 
