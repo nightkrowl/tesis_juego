@@ -8,9 +8,10 @@ from pygame.locals import *
 from random import shuffle
 import random
 import time
+import os
 from Instrucciones import *
 
-size = width, height = 500, 370
+size = width, height = 500, 400
 
 class Opcion:
 
@@ -125,7 +126,170 @@ class Menu:
 
         for opcion in self.opciones:
             opcion.imprimir(screen)
+            
+def abc_game():
+    pygame.mixer.music.stop()
+    lose = pygame.mixer.Sound("sound/gameover.wav")
+    pygame.mixer.music.load("sound/abc_sound.mp3")
+    pygame.mixer.music.play(-1)
+    global j
+    
+    class Pantalla:
 
+        COLOR_NEU = (0, 0, 0)
+        COLOR_MAL = (255, 0, 0)
+        P_ANCHO = 350
+        P_ALTO = 250
+        Y_INICIAL = 70
+        COLOR_OK = (0, 255, 0)
+        def __init__(self):
+            pygame.font.init()
+            self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
+            self.limpiar()
+            pygame.display.set_caption("Abecedario.")
+            self.clock = pygame.time.Clock()
+            ruta = os.path.join("font", "cubicfive10.ttf")
+            self.fontC = pygame.font.Font(ruta, 12)
+            self.font = pygame.font.Font(ruta, 28)
+            self.fontG = pygame.font.Font(ruta, 40)
+            self.iniciado = False
+            
+        def iniciar(self):
+            self.iniciado = True
+            self.reiniciar()
+            
+        def reiniciar(self):
+            self.fx = 0
+            self.fy = 80
+            self.limpiar()
+            self.setCuadraditos()
+            self.refresh()
+            
+        def limpiar(self):
+            self.pantalla.fill((245, 245, 220))
+            
+        def setNumOK(self, num):
+            self.setNum(num, self.COLOR_OK)
+            
+        def setNumMAL(self, num):
+            self.setNum(num + "!", self.COLOR_MAL)
+            
+        def setNum(self, num, color):
+            txt = self.font.render(str(num), True, color)
+            self.pantalla.blit(txt, (self.fx, self.fy))
+            if self.fx + 40 >= self.P_ANCHO:
+                self.fx = 0
+                self.fy += 40
+            else:
+                self.fx += 40
+            
+        def refresh(self):
+            pygame.display.update()
+            pygame.event.pump()
+            self.clock.tick(30)
+            
+        def update(self):
+            self.refresh()
+            
+        def gano(self):
+            self.limpiar()
+            txt1 = self.fontG.render("Felicidades!", True, self.COLOR_NEU)
+            txt2 = self.fontC.render("Te aprendiste el abecedario.", True, self.COLOR_NEU)
+            self.pantalla.blit(txt1, ((self.P_ANCHO - txt1.get_rect().w)/2, 50))
+            self.pantalla.blit(txt2, ((self.P_ANCHO - txt2.get_rect().w)/2, 100))
+            self.refresh()
+            
+        def setCuadraditos(self):
+            linea = pygame.Surface((25, 5))
+            linea.fill(self.COLOR_NEU)
+            for y in range(1, 4):
+                for x in range(0, self.P_ANCHO, 40):
+                    self.pantalla.blit(linea, (x, self.Y_INICIAL + (40*y + 2)))
+
+
+    class Teclado:
+
+        def __init__(self):
+            self.iniciado = False
+            
+        def update(self, perdio):
+            if perdio:
+                pygame.event.clear()
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    main()
+                elif event.type == pygame.KEYDOWN:
+                    num = u""
+                    num+=event.unicode  
+                    return str(num)
+                    
+            while self.iniciado == False:
+                self.iniciado = True
+            return True
+            
+    class Juego:
+
+        Abecedario = "abcdefghijklmnopqrstuvwxyz"
+
+        def __init__(self):
+            self.teclado = Teclado()
+            self.pantalla = Pantalla()        
+            self.main()
+            
+        def reiniciar(self):
+            self.indice = 0
+            self.pantalla.reiniciar()
+            
+        def check(self, num):
+            if self.getDecActual() == num:
+                self.indice += 1
+                if self.indice == len(self.Abecedario):
+                    return "g"
+                return True
+            else:
+                return False
+                
+        def getDecActual(self):
+            return self.Abecedario[self.indice]
+            
+        def getDecAnt(self):
+            return self.Abecedario[self.indice - 1]
+            
+        def gano(self):
+            self.pantalla.gano()
+            pygame.time.wait(10000)
+            main()
+
+        def main(self):
+            while not self.teclado.iniciado:
+                self.teclado.update(False)
+                self.pantalla.update()
+            self.pantalla.iniciar()
+            self.reiniciar()
+            r = True
+            perdio = False
+            while r:
+                r = self.teclado.update(perdio)
+                perdio = False
+                self.pantalla.update()
+                if r not in (True, False):
+                    n = self.check(r)
+                    if n:
+                        if n == 'g':
+                            self.gano()
+                            break
+                        else:
+                            self.pantalla.setNumOK(self.getDecAnt())                        
+                    else:
+                        self.pantalla.setNumMAL(self.getDecActual())
+                        self.pantalla.update()
+                        pygame.time.wait(2000)                        
+                        self.reiniciar()
+                        perdio = True
+            pygame.quit()
+
+    j = Juego()
+    
 def mate_game():
     pygame.mixer.music.stop()
     lose = pygame.mixer.Sound("sound/gameover.wav")
@@ -134,83 +298,83 @@ def mate_game():
     global py
 
     class Program():
-            def __init__(self):
-                    self.size = (300,400)
-                    self.screen = pygame.display.set_mode(self.size)
-                    self.pi = 3.14159265358979323846264
-                    self.digit = 0
-                    self.right = 0
-                    self.wrong = 0
-                    self.digit_a = 1
-                    self.digit_b = 2
-                    self.digit_c = 1
-                    self.digit_d = 2
-                    self.answer = ""
-                    self.done = False
-                    self.operation = "*"
-                    self.move_on = True
-                    self.objects = []
-                    #colors
-                    self.black = (0,0,0)
-                    self.white = (255,255,255)
-                    self.blue = (0,0,255)
-                    self.green = (0,255,0)
-                    self.red = (255,0,0)
-                    #configuration
-                    self.clock = pygame.time.Clock()
-                    self.background_image = pygame.image.load("images/backmate.png").convert()
-                    pygame.font.init()
-                    self.font1 = pygame.font.Font (None,70)
-                    self.operand = self.font1.render("*",True,self.red)
+        def __init__(self):
+                self.size = (300,400)
+                self.screen = pygame.display.set_mode(self.size)
+                self.pi = 3.14159265358979323846264
+                self.digit = 0
+                self.right = 0
+                self.wrong = 0
+                self.digit_a = 1
+                self.digit_b = 2
+                self.digit_c = 1
+                self.digit_d = 2
+                self.answer = ""
+                self.done = False
+                self.operation = "*"
+                self.move_on = True
+                self.objects = []
+                #colors
+                self.black = (0,0,0)
+                self.white = (255,255,255)
+                self.blue = (0,0,255)
+                self.green = (0,255,0)
+                self.red = (255,0,0)
+                #configuration
+                self.clock = pygame.time.Clock()
+                self.background_image = pygame.image.load("images/backmate.png").convert()
+                pygame.font.init()
+                self.font1 = pygame.font.Font (None,70)
+                self.operand = self.font1.render("*",True,self.red)
 
-            def end_option(self):
-                    self.operand = py.font1.render(self.operation,True,py.red)
-                    self.move_on = False
-                    self.done = True
+        def end_option(self):
+                self.operand = py.font1.render(self.operation,True,py.red)
+                self.move_on = False
+                self.done = True
 
-            def multi(self):
-                    self.digit_a = 1
-                    self.digit_b = 100
-                    self.digit_c = 2
-                    self.digit_d = 10
-                    self.operation = "*" 
-                    self.end_option()
+        def multi(self):
+                self.digit_a = 1
+                self.digit_b = 100
+                self.digit_c = 2
+                self.digit_d = 10
+                self.operation = "*" 
+                self.end_option()
 
-            def addi(self):
-                    self.digit_a = 100
-                    self.digit_b = 1000
-                    self.digit_c = 100
-                    self.digit_d = 1000
-                    self.operation = "+"
-                    self.end_option()
+        def addi(self):
+                self.digit_a = 100
+                self.digit_b = 1000
+                self.digit_c = 100
+                self.digit_d = 1000
+                self.operation = "+"
+                self.end_option()
 
-            def subt(self):
-                    self.digit_a = 100
-                    self.digit_b = 1000
-                    self.digit_c = 10
-                    self.digit_d = 100
-                    self.operation = "-"
-                    self.end_option()
+        def subt(self):
+                self.digit_a = 100
+                self.digit_b = 1000
+                self.digit_c = 10
+                self.digit_d = 100
+                self.operation = "-"
+                self.end_option()
 
-            def divid(self):
-                    self.digit_a = 100
-                    self.digit_b = 1000
-                    self.digit_c = 2
-                    self.digit_d = 10
-                    self.operation = "/"
-                    self.end_option()
+        def divid(self):
+                self.digit_a = 100
+                self.digit_b = 1000
+                self.digit_c = 2
+                self.digit_d = 10
+                self.operation = "/"
+                self.end_option()
 
-            def draw(self,h):
-                    for i in xrange(len(self.objects[h])):
-                            self.screen.blit(self.objects[h][i].format,self.objects[h][i].xy)
-                            
+        def draw(self,h):
+                for i in xrange(len(self.objects[h])):
+                        self.screen.blit(self.objects[h][i].format,self.objects[h][i].xy)
+                        
     py = Program()
 
     class Numbers():
-            def __init__(self,x,y,a,b,font = 'font1',color = 'black'):
-                    self.rand = random.randrange(a,b)
-                    self.format = eval('py.%s.render("%s",True,py.%s)' % (font,self.rand,color))
-                    self.xy = x,y
+        def __init__(self,x,y,a,b,font = 'font1',color = 'black'):
+                self.rand = random.randrange(a,b)
+                self.format = eval('py.%s.render("%s",True,py.%s)' % (font,self.rand,color))
+                self.xy = x,y
 
     pygame.display.set_caption("Matematicas")
 
@@ -344,13 +508,30 @@ def memo_game():
     push = pygame.mixer.Sound("sound/menuok.wav")
     pygame.mixer.music.load("sound/mega.mp3")
     pygame.mixer.music.play(-1)
+    algo = True
     
+    screen = pygame.display.set_mode((800, 504), 0, 32)
+
+    def Ayuda(screen):      
+        Instrucciones(screen, ["CONTROLES:",
+        "",
+        "Movimiento: Con el raton o mouse",
+        "Voltear carta: Click",
+        "Regresar: Boton Escape (ESC)",                 
+        "",
+        "OBJETIVO:",
+        "Encuentra todos los pares para ganar!!",
+        "Pero ojo!, si te equivocas perderas",
+        "oportunidades, en cuanto tiempo lo",
+        "lograras?"])
+        algo = False
+            
     ncelx =  5 
     ncely =  4
     vidas =  20
     cellsize = 80
     orange = (230, 95, 0)
-    
+
     set_ = list("1234567890")
 
     verde = pygame.Color("green")
@@ -360,6 +541,10 @@ def memo_game():
 
     pygame.mixer.init(44100, -16, 2, 1024)
     pygame.mixer.music.set_volume(0.8)
+
+    while algo:
+        help = Ayuda(screen)
+        algo = False
 
     def play_again():
         pygame.mixer.music.stop()
@@ -391,14 +576,14 @@ def memo_game():
 
     pygame.font.init()
     police = pygame.font.Font(None,int(cellsize//1.5))
-
+    pygame.mouse.set_visible(True)
     primcarta = None 
 
     while True:
-
+        
         cartas = make_set()
         draw_hidden()
-
+        
         pygame.event.clear()
         pygame.time.set_timer(pygame.USEREVENT,1000)
         secondes = 0
@@ -445,7 +630,7 @@ def memo_game():
         break
 
     pygame.quit()
-
+    
 def inva_game():
     pygame.mixer.music.stop()
     lose = pygame.mixer.Sound("sound/gameover.wav")
@@ -666,6 +851,7 @@ def main():
         ("Invasores", inva_game),
         ("Memorama", memo_game),
         ("Matematicas", mate_game),
+        ("Abecedario", abc_game),
         ("Opciones", options),
         ("Creditos", credits),
         ("Puntuacion", highscore),

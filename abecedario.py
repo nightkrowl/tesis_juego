@@ -14,17 +14,17 @@ class Pantalla:
     Y_INICIAL = 70
     COLOR_OK = (0, 255, 0)
     def __init__(self):
-        pygame.font.init()
-        self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
-        self.limpiar()
-        pygame.display.set_caption("Abecedario.")
-        self.clock = pygame.time.Clock()
-        ruta = os.path.join("font", "cubicfive10.ttf")
-        self.fontC = pygame.font.Font(ruta, 12)
-        self.font = pygame.font.Font(ruta, 28)
-        self.fontG = pygame.font.Font(ruta, 40)
-        self.iniciado = False
-        
+		pygame.font.init()
+		self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
+		self.limpiar()
+		pygame.display.set_caption("Abecedario.")
+		self.clock = pygame.time.Clock()
+		ruta = os.path.join("font", "cubicfive10.ttf")
+		self.fontC = pygame.font.Font(ruta, 12)
+		self.font = pygame.font.Font(ruta, 28)
+		self.fontG = pygame.font.Font(ruta, 40)
+		self.iniciado = False
+		
     def iniciar(self):
         self.iniciado = True
         self.reiniciar()
@@ -93,7 +93,7 @@ class Teclado:
                 num = u""
                 num+=event.unicode  
                 return str(num)
-                
+				
         while self.iniciado == False:
             self.iniciado = True
         return True
