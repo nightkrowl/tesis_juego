@@ -133,7 +133,7 @@ def abc_game():
     pygame.mixer.music.load("sound/abc_sound.mp3")
     pygame.mixer.music.play(-1)
     global j
-    
+
     class Pantalla:
 
         COLOR_NEU = (0, 0, 0)
@@ -168,14 +168,14 @@ def abc_game():
         def limpiar(self):
             self.pantalla.fill((245, 245, 220))
             
-        def setNumOK(self, num):
-            self.setNum(num, self.COLOR_OK)
+        def setcharOK(self, char):
+            self.setchar(char, self.COLOR_OK)
             
-        def setNumMAL(self, num):
-            self.setNum(num + "!", self.COLOR_MAL)
+        def setcharMAL(self, char):
+            self.setchar(char + "!", self.COLOR_MAL)
             
-        def setNum(self, num, color):
-            txt = self.font.render(str(num), True, color)
+        def setchar(self, char, color):
+            txt = self.font.render(str(char), True, color)
             self.pantalla.blit(txt, (self.fx, self.fy))
             if self.fx + 40 >= self.P_ANCHO:
                 self.fx = 0
@@ -205,7 +205,7 @@ def abc_game():
             for y in range(1, 4):
                 for x in range(0, self.P_ANCHO, 40):
                     self.pantalla.blit(linea, (x, self.Y_INICIAL + (40*y + 2)))
-
+        
 
     class Teclado:
 
@@ -217,12 +217,17 @@ def abc_game():
                 pygame.event.clear()
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    main()
+                    exit()
                 elif event.type == pygame.KEYDOWN:
-                    num = u""
-                    num+=event.unicode  
-                    return str(num)
-                    
+                    char = None
+                    if event.key >= 32 and event.key <= 126:
+                        char = event.unicode
+                        #print char
+                    if char is not None:
+                        return str(char)
+            teclas = pygame.key.get_pressed()
+            if teclas[K_ESCAPE]:
+                return False
             while self.iniciado == False:
                 self.iniciado = True
             return True
@@ -230,7 +235,7 @@ def abc_game():
     class Juego:
 
         Abecedario = "abcdefghijklmnopqrstuvwxyz"
-
+        
         def __init__(self):
             self.teclado = Teclado()
             self.pantalla = Pantalla()        
@@ -240,8 +245,8 @@ def abc_game():
             self.indice = 0
             self.pantalla.reiniciar()
             
-        def check(self, num):
-            if self.getDecActual() == num:
+        def check(self, char):
+            if self.getDecActual() == char:
                 self.indice += 1
                 if self.indice == len(self.Abecedario):
                     return "g"
@@ -258,8 +263,7 @@ def abc_game():
         def gano(self):
             self.pantalla.gano()
             pygame.time.wait(10000)
-            main()
-
+        
         def main(self):
             while not self.teclado.iniciado:
                 self.teclado.update(False)
@@ -279,9 +283,9 @@ def abc_game():
                             self.gano()
                             break
                         else:
-                            self.pantalla.setNumOK(self.getDecAnt())                        
+                            self.pantalla.setcharOK(self.getDecAnt())                        
                     else:
-                        self.pantalla.setNumMAL(self.getDecActual())
+                        self.pantalla.setcharMAL(self.getDecActual())
                         self.pantalla.update()
                         pygame.time.wait(2000)                        
                         self.reiniciar()
@@ -289,7 +293,7 @@ def abc_game():
             pygame.quit()
 
     j = Juego()
-    
+
 def mate_game():
     pygame.mixer.music.stop()
     lose = pygame.mixer.Sound("sound/gameover.wav")
@@ -458,29 +462,14 @@ def mate_game():
                                     sys.exit()
                     
                             if event.type == pygame.KEYDOWN:
-                                    if event.key == pygame.K_1:
-                                            py.answer += "1"
-                                    elif event.key == pygame.K_2:
-                                            py.answer += "2"
-                                    elif event.key == pygame.K_3:
-                                            py.answer += "3"
-                                    elif event.key == pygame.K_4:
-                                            py.answer += "4"
-                                    elif event.key == pygame.K_5:
-                                            py.answer += "5"
-                                    elif event.key == pygame.K_6:
-                                            py.answer += "6"
-                                    elif event.key == pygame.K_7:
-                                            py.answer += "7"
-                                    elif event.key == pygame.K_8:
-                                            py.answer += "8"
-                                    elif event.key == pygame.K_9:
-                                            py.answer += "9"
-                                    elif event.key == pygame.K_0:
-                                            py.answer += "0"
+                                    if event.key >= 48 and event.key <= 57:
+                                        py.answer += str(event.key - 48)
+                                        #print py.answer
+                                    elif event.key >= 256 and event.key <= 265:
+                                        py.answer += str(event.key - 256)
                                     elif event.key == pygame.K_BACKSPACE:
-                                            py.answer = py.answer[0:-1]
-                                            py.screen.blit(py.background_image,[0,0])
+                                        py.answer = py.answer[0:-1]
+                                        py.screen.blit(py.background_image,[0,0])
                                     elif event.key == pygame.K_ESCAPE:
                                         main()
 

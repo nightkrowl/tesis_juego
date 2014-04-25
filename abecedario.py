@@ -3,6 +3,7 @@
 
 import os
 import pygame
+import unicodedata
 from pygame import *
 
 class Pantalla:
@@ -14,17 +15,17 @@ class Pantalla:
     Y_INICIAL = 70
     COLOR_OK = (0, 255, 0)
     def __init__(self):
-		pygame.font.init()
-		self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
-		self.limpiar()
-		pygame.display.set_caption("Abecedario.")
-		self.clock = pygame.time.Clock()
-		ruta = os.path.join("font", "cubicfive10.ttf")
-		self.fontC = pygame.font.Font(ruta, 12)
-		self.font = pygame.font.Font(ruta, 28)
-		self.fontG = pygame.font.Font(ruta, 40)
-		self.iniciado = False
-		
+        pygame.font.init()
+        self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
+        self.limpiar()
+        pygame.display.set_caption("Abecedario.")
+        self.clock = pygame.time.Clock()
+        ruta = os.path.join("font", "cubicfive10.ttf")
+        self.fontC = pygame.font.Font(ruta, 12)
+        self.font = pygame.font.Font(ruta, 28)
+        self.fontG = pygame.font.Font(ruta, 40)
+        self.iniciado = False
+        
     def iniciar(self):
         self.iniciado = True
         self.reiniciar()
@@ -39,14 +40,14 @@ class Pantalla:
     def limpiar(self):
         self.pantalla.fill((245, 245, 220))
         
-    def setNumOK(self, num):
-        self.setNum(num, self.COLOR_OK)
+    def setcharOK(self, char):
+        self.setchar(char, self.COLOR_OK)
         
-    def setNumMAL(self, num):
-        self.setNum(num + "!", self.COLOR_MAL)
+    def setcharMAL(self, char):
+        self.setchar(char + "!", self.COLOR_MAL)
         
-    def setNum(self, num, color):
-        txt = self.font.render(str(num), True, color)
+    def setchar(self, char, color):
+        txt = self.font.render(str(char), True, color)
         self.pantalla.blit(txt, (self.fx, self.fy))
         if self.fx + 40 >= self.P_ANCHO:
             self.fx = 0
@@ -90,17 +91,22 @@ class Teclado:
             if event.type == QUIT:
                 exit()
             elif event.type == pygame.KEYDOWN:
-                num = u""
-                num+=event.unicode  
-                return str(num)
-				
+                char = None
+                if event.key >= 32 and event.key <= 126:
+                    char = event.unicode
+                    #print char
+                if char is not None:
+                    return str(char)
+        teclas = pygame.key.get_pressed()
+        if teclas[K_ESCAPE]:
+            return False
         while self.iniciado == False:
             self.iniciado = True
         return True
         
 class Juego:
 
-    Abecedario = "abcdefghijklmnñopqrstuvwxyz"
+    Abecedario = "abcdefghijklmnopqrstuvwxyz"
     
     def __init__(self):
         self.teclado = Teclado()
@@ -111,8 +117,8 @@ class Juego:
         self.indice = 0
         self.pantalla.reiniciar()
         
-    def check(self, num):
-        if self.getDecActual() == num:
+    def check(self, char):
+        if self.getDecActual() == char:
             self.indice += 1
             if self.indice == len(self.Abecedario):
                 return "g"
@@ -149,9 +155,9 @@ class Juego:
                         self.gano()
                         break
                     else:
-                        self.pantalla.setNumOK(self.getDecAnt())                        
+                        self.pantalla.setcharOK(self.getDecAnt())                        
                 else:
-                    self.pantalla.setNumMAL(self.getDecActual())
+                    self.pantalla.setcharMAL(self.getDecActual())
                     self.pantalla.update()
                     pygame.time.wait(2000)                        
                     self.reiniciar()
