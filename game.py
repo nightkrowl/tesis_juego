@@ -126,8 +126,9 @@ class Menu:
 
         for opcion in self.opciones:
             opcion.imprimir(screen)
-            
+			
 def abc_game():
+<<<<<<< HEAD
     pygame.mixer.music.stop()
     lose = pygame.mixer.Sound("sound/gameover.wav")
     pygame.mixer.music.load("sound/abc_sound.mp3")
@@ -311,6 +312,191 @@ def abc_game():
         help = Ayuda(screen)
         goto = False
     j = Juego()
+=======
+	pygame.mixer.music.stop()
+	lose = pygame.mixer.Sound("sound/gameover.wav")
+	pygame.mixer.music.load("sound/abc_sound.mp3")
+	pygame.mixer.music.play(-1)
+	goto = True
+	screen = pygame.display.set_mode((800, 504), 0, 32)
+	global j
+
+	def Ayuda(screen):		
+		Instrucciones(screen, ["CONTROLES:",
+		"",
+		"Teclas: Letras",                 
+		"",
+		"OBJETIVO:",
+		"Teclea todo el abecedario para ganar",
+		"Si te equivocas, empezaras de nuevo y el",
+		"juego te dara una ayuda, crees poder",
+		"lograrlo?"])
+		goto = False
+
+
+	class Pantalla:
+
+	    COLOR_NEU = (0, 0, 0)
+	    COLOR_MAL = (255, 0, 0)
+	    P_ANCHO = 350
+	    P_ALTO = 250
+	    Y_INICIAL = 70
+	    COLOR_OK = (0, 255, 0)
+	    def __init__(self):
+			pygame.font.init()
+			self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
+			self.limpiar()
+			pygame.display.set_caption("Abecedario.")
+			self.clock = pygame.time.Clock()
+			ruta = os.path.join("font", "cubicfive10.ttf")
+			self.fontC = pygame.font.Font(ruta, 12)
+			self.font = pygame.font.Font(ruta, 28)
+			self.fontG = pygame.font.Font(ruta, 40)
+			self.iniciado = False
+			
+	    def iniciar(self):
+	        self.iniciado = True
+	        self.reiniciar()
+	        
+	    def reiniciar(self):
+	        self.fx = 0
+	        self.fy = 80
+	        self.limpiar()
+	        self.setCuadraditos()
+	        self.refresh()
+	        
+	    def limpiar(self):
+	        self.pantalla.fill((245, 245, 220))
+	        
+	    def setcharOK(self, char):
+	        self.setchar(char, self.COLOR_OK)
+	        
+	    def setcharMAL(self, char):
+	        self.setchar(char + "!", self.COLOR_MAL)
+	        
+	    def setchar(self, char, color):
+	        txt = self.font.render(str(char), True, color)
+	        self.pantalla.blit(txt, (self.fx, self.fy))
+	        if self.fx + 40 >= self.P_ANCHO:
+	            self.fx = 0
+	            self.fy += 40
+	        else:
+	            self.fx += 40
+	        
+	    def refresh(self):
+	        pygame.display.update()
+	        pygame.event.pump()
+	        self.clock.tick(30)
+	        
+	    def update(self):
+	        self.refresh()
+	        
+	    def gano(self):
+	        self.limpiar()
+	        txt1 = self.fontG.render("Felicidades!", True, self.COLOR_NEU)
+	        txt2 = self.fontC.render("Te aprendiste el abecedario.", True, self.COLOR_NEU)
+	        self.pantalla.blit(txt1, ((self.P_ANCHO - txt1.get_rect().w)/2, 50))
+	        self.pantalla.blit(txt2, ((self.P_ANCHO - txt2.get_rect().w)/2, 100))
+	        self.refresh()
+	        
+	    def setCuadraditos(self):
+	        linea = pygame.Surface((25, 5))
+	        linea.fill(self.COLOR_NEU)
+	        for y in range(1, 4):
+	            for x in range(0, self.P_ANCHO, 40):
+	                self.pantalla.blit(linea, (x, self.Y_INICIAL + (40*y + 2)))
+	    
+
+	class Teclado:
+
+	    def __init__(self):
+	        self.iniciado = False
+	        
+	    def update(self, perdio):
+	        if perdio:
+	            pygame.event.clear()
+	        for event in pygame.event.get():
+	            if event.type == QUIT:
+	                exit()
+	            elif event.type == pygame.KEYDOWN:
+	                char = None
+	                if event.key >= 32 and event.key <= 126:
+	                    char = event.unicode
+	                    #print char
+	                if char is not None:
+	                    return str(char)
+	        teclas = pygame.key.get_pressed()
+	        if teclas[K_ESCAPE]:
+	            return False
+	        while self.iniciado == False:
+	            self.iniciado = True
+	        return True
+	        
+	class Juego:
+
+	    Abecedario = "abcdefghijklmnopqrstuvwxyz"
+	    
+	    def __init__(self):
+	        self.teclado = Teclado()
+	        self.pantalla = Pantalla()        
+	        self.main()
+	        
+	    def reiniciar(self):
+	        self.indice = 0
+	        self.pantalla.reiniciar()
+	        
+	    def check(self, char):
+	        if self.getDecActual() == char:
+	            self.indice += 1
+	            if self.indice == len(self.Abecedario):
+	                return "g"
+	            return True
+	        else:
+	            return False
+	            
+	    def getDecActual(self):
+	        return self.Abecedario[self.indice]
+	        
+	    def getDecAnt(self):
+	        return self.Abecedario[self.indice - 1]
+	        
+	    def gano(self):
+	        self.pantalla.gano()
+	        pygame.time.wait(10000)
+	    
+	    def main(self):
+	        while not self.teclado.iniciado:
+	            self.teclado.update(False)
+	            self.pantalla.update()
+	        self.pantalla.iniciar()
+	        self.reiniciar()
+	        r = True
+	        perdio = False
+	        while r:
+	            r = self.teclado.update(perdio)
+	            perdio = False
+	            self.pantalla.update()
+	            if r not in (True, False):
+	                n = self.check(r)
+	                if n:
+	                    if n == 'g':
+	                        self.gano()
+	                        break
+	                    else:
+	                        self.pantalla.setcharOK(self.getDecAnt())                        
+	                else:
+	                    self.pantalla.setcharMAL(self.getDecActual())
+	                    self.pantalla.update()
+	                    pygame.time.wait(2000)                        
+	                    self.reiniciar()
+	                    perdio = True
+	        pygame.quit()
+
+	while goto:
+		help = Ayuda(screen)
+		goto = False
+	j = Juego()
+>>>>>>> cbe32287f1fb5d4e954a2efa6a82e34b75847a8e
 
 def mate_game():
     pygame.mixer.music.stop()
@@ -321,6 +507,7 @@ def mate_game():
     screen = pygame.display.set_mode((800, 504), 0, 32)
     global py
 
+<<<<<<< HEAD
     def Ayuda(screen):      
         Instrucciones(screen, ["CONTROLES:",
         "",
@@ -407,14 +594,102 @@ def mate_game():
     while goto:
         help = Ayuda(screen)
         goto = False
+=======
+    def Ayuda(screen):		
+		Instrucciones(screen, ["CONTROLES:",
+		"",
+		"Teclas: Numeros",                 
+		"",
+		"OBJETIVO:",
+		"Realiza las operaciones para avanzar!!",
+		"Si te equivocas, no importa el juego",
+		"te dara una ayuda, cuantos puntos",
+		"obtendras?"])
+		goto = False
+
+    class Program():
+		def __init__(self):
+				self.size = (300,400)
+				self.screen = pygame.display.set_mode(self.size)
+				self.pi = 3.14159265358979323846264
+				self.digit = 0
+				self.right = 0
+				self.wrong = 0
+				self.digit_a = 1
+				self.digit_b = 2
+				self.digit_c = 1
+				self.digit_d = 2
+				self.answer = ""
+				self.done = False
+				self.operation = "*"
+				self.move_on = True
+				self.objects = []
+				#colors
+				self.black = (0,0,0)
+				self.white = (255,255,255)
+				self.blue = (0,0,255)
+				self.green = (0,255,0)
+				self.red = (255,0,0)
+				#configuration
+				self.clock = pygame.time.Clock()
+				self.background_image = pygame.image.load("images/backmate.png").convert()
+				pygame.font.init()
+				self.font1 = pygame.font.Font (None,70)
+				self.operand = self.font1.render("*",True,self.red)
+
+		def end_option(self):
+				self.operand = py.font1.render(self.operation,True,py.red)
+				self.move_on = False
+				self.done = True
+
+		def multi(self):
+				self.digit_a = 1
+				self.digit_b = 100
+				self.digit_c = 2
+				self.digit_d = 10
+				self.operation = "*" 
+				self.end_option()
+
+		def addi(self):
+				self.digit_a = 100
+				self.digit_b = 1000
+				self.digit_c = 100
+				self.digit_d = 1000
+				self.operation = "+"
+				self.end_option()
+
+		def subt(self):
+				self.digit_a = 100
+				self.digit_b = 1000
+				self.digit_c = 10
+				self.digit_d = 100
+				self.operation = "-"
+				self.end_option()
+
+		def divid(self):
+				self.digit_a = 100
+				self.digit_b = 1000
+				self.digit_c = 2
+				self.digit_d = 10
+				self.operation = "/"
+				self.end_option()
+
+		def draw(self,algo = True):
+				for i in xrange(len(self.objects[h])):
+						self.screen.blit(self.objects[h][i].format,self.objects[h][i].xy)
+
+    while goto:
+		help = Ayuda(screen)
+		goto = False
+>>>>>>> cbe32287f1fb5d4e954a2efa6a82e34b75847a8e
 
     py = Program()
 
     class Numbers():
-        def __init__(self,x,y,a,b,font = 'font1',color = 'black'):
-                self.rand = random.randrange(a,b)
-                self.format = eval('py.%s.render("%s",True,py.%s)' % (font,self.rand,color))
-                self.xy = x,y
+		def __init__(self,x,y,a,b,font = 'font1',color = 'black'):
+				self.rand = random.randrange(a,b)
+				self.format = eval('py.%s.render("%s",True,py.%s)' % (font,self.rand,color))
+				self.xy = x,y
 
     pygame.display.set_caption("Matematicas")
 
@@ -498,16 +773,16 @@ def mate_game():
                                     sys.exit()
                     
                             if event.type == pygame.KEYDOWN:
-                                    if event.key >= 48 and event.key <= 57:
-                                        py.answer += str(event.key - 48)
-                                        #print py.answer
-                                    elif event.key >= 256 and event.key <= 265:
-                                        py.answer += str(event.key - 256)
-                                    elif event.key == pygame.K_BACKSPACE:
-                                        py.answer = py.answer[0:-1]
-                                        py.screen.blit(py.background_image,[0,0])
-                                    elif event.key == pygame.K_ESCAPE:
-                                        main()
+					                if event.key >= 48 and event.key <= 57:
+					                    py.answer += str(event.key - 48)
+					                    #print py.answer
+					                elif event.key >= 256 and event.key <= 265:
+					                    py.answer += str(event.key - 256)
+					                elif event.key == pygame.K_BACKSPACE:
+					                	py.answer = py.answer[0:-1]
+					                	py.screen.blit(py.background_image,[0,0])
+					                elif event.key == pygame.K_ESCAPE:
+					                	main()
 
                             py.screen.blit(first_number.format,first_number.xy)
                             py.screen.blit(second_number.format,second_number.xy)
@@ -527,135 +802,135 @@ def mate_game():
                             py.screen.blit(answer_out,[125,180])
 
                             pygame.display.flip()
-    
+	
 def memo_game():
-    pygame.mixer.music.stop()
-    push = pygame.mixer.Sound("sound/menuok.wav")
-    pygame.mixer.music.load("sound/mega.mp3")
-    pygame.mixer.music.play(-1)
-    algo = True
-    
-    screen = pygame.display.set_mode((800, 504), 0, 32)
+	pygame.mixer.music.stop()
+	push = pygame.mixer.Sound("sound/menuok.wav")
+	pygame.mixer.music.load("sound/mega.mp3")
+	pygame.mixer.music.play(-1)
+	algo = True
+	
+	screen = pygame.display.set_mode((800, 504), 0, 32)
 
-    def Ayuda(screen):      
-        Instrucciones(screen, ["CONTROLES:",
-        "",
-        "Movimiento: Con el raton o mouse",
-        "Voltear carta: Click",
-        "Regresar: Boton Escape (ESC)",                 
-        "",
-        "OBJETIVO:",
-        "Encuentra todos los pares para ganar!!",
-        "Pero ojo!, si te equivocas perderas",
-        "oportunidades, en cuanto tiempo lo",
-        "lograras?"])
-        algo = False
-            
-    ncelx =  5 
-    ncely =  4
-    vidas =  20
-    cellsize = 80
-    orange = (230, 95, 0)
+	def Ayuda(screen):		
+		Instrucciones(screen, ["CONTROLES:",
+		"",
+		"Movimiento: Con el raton o mouse",
+		"Voltear carta: Click",
+		"Regresar: Boton Escape (ESC)",                 
+		"",
+		"OBJETIVO:",
+		"Encuentra todos los pares para ganar!!",
+		"Pero ojo!, si te equivocas perderas",
+		"oportunidades, en cuanto tiempo lo",
+		"lograras?"])
+		algo = False
+			
+	ncelx =  5 
+	ncely =  4
+	vidas =  20
+	cellsize = 80
+	orange = (230, 95, 0)
 
-    set_ = list("1234567890")
+	set_ = list("1234567890")
 
-    verde = pygame.Color("green")
-    gris   = pygame.Color("grey20")
-    negro   = pygame.Color("black")
-    blanco  = pygame.Color("white")
+	verde = pygame.Color("green")
+	gris   = pygame.Color("grey20")
+	negro   = pygame.Color("black")
+	blanco  = pygame.Color("white")
 
-    pygame.mixer.init(44100, -16, 2, 1024)
-    pygame.mixer.music.set_volume(0.8)
+	pygame.mixer.init(44100, -16, 2, 1024)
+	pygame.mixer.music.set_volume(0.8)
 
-    while algo:
-        help = Ayuda(screen)
-        algo = False
+	while algo:
+		help = Ayuda(screen)
+		algo = False
 
-    def play_again():
-        pygame.mixer.music.stop()
-        main()
-        #texto = police.render('click para jugar otra vez',1,gris,verde)
-        #pygame.display.update(scr.blit(texto,texto.get_rect(center=scrrect.center)))
-        #while True:
-        #e = pygame.event.wait()
-        #if e.type   == pygame.MOUSEBUTTONDOWN: return True
-        #elif e.type == pygame.QUIT: return False
+	def play_again():
+		pygame.mixer.music.stop()
+		main()
+		#texto = police.render('click para jugar otra vez',1,gris,verde)
+		#pygame.display.update(scr.blit(texto,texto.get_rect(center=scrrect.center)))
+		#while True:
+		#e = pygame.event.wait()
+		#if e.type   == pygame.MOUSEBUTTONDOWN: return True
+		#elif e.type == pygame.QUIT: return False
 
-    def draw_hidden():
-        scr.fill(verde)
-        for y in range(0,scrrect.h,cellsize):
-            for x in range(0,scrrect.w,cellsize):
-                scr.fill(negro,(x+1,y+1,cellsize-2,cellsize-2))
-        pygame.display.flip()
+	def draw_hidden():
+		scr.fill(verde)
+		for y in range(0,scrrect.h,cellsize):
+			for x in range(0,scrrect.w,cellsize):
+				scr.fill(negro,(x+1,y+1,cellsize-2,cellsize-2))
+		pygame.display.flip()
 
-    def make_set():
-        nb_cartas = (ncelx*ncely)//2
-        cartas = set_*int(nb_cartas//len(set_))
-        cartas += set_[:nb_cartas%len(set_)]
-        cartas *= 2
-        shuffle(cartas)
-        return cartas
+	def make_set():
+		nb_cartas = (ncelx*ncely)//2
+		cartas = set_*int(nb_cartas//len(set_))
+		cartas += set_[:nb_cartas%len(set_)]
+		cartas *= 2
+		shuffle(cartas)
+		return cartas
 
-    scr = pygame.display.set_mode((ncelx*cellsize,ncely*cellsize))
-    scrrect = scr.get_rect()
+	scr = pygame.display.set_mode((ncelx*cellsize,ncely*cellsize))
+	scrrect = scr.get_rect()
 
-    pygame.font.init()
-    police = pygame.font.Font(None,int(cellsize//1.5))
-    pygame.mouse.set_visible(True)
-    primcarta = None 
+	pygame.font.init()
+	police = pygame.font.Font(None,int(cellsize//1.5))
+	pygame.mouse.set_visible(True)
+	primcarta = None 
 
-    while True:
-        
-        cartas = make_set()
-        draw_hidden()
-        
-        pygame.event.clear()
-        pygame.time.set_timer(pygame.USEREVENT,1000)
-        secondes = 0
+	while True:
+		
+		cartas = make_set()
+		draw_hidden()
+		
+		pygame.event.clear()
+		pygame.time.set_timer(pygame.USEREVENT,1000)
+		secondes = 0
 
-        while any(cartas):
-            e = pygame.event.wait()
-            if e.type == pygame.QUIT: break
-            elif e.type == pygame.USEREVENT:
-                secondes += 1
-                pygame.display.set_caption(str(secondes))
-            elif e.type == pygame.MOUSEBUTTONDOWN:
-                push.play()
-                index = e.pos[1]//cellsize*ncelx+e.pos[0]//cellsize
-                if cartas[index] and index!=primcarta:
-                    r = scr.fill(blanco,(index%ncelx*cellsize+1,index//ncelx*cellsize+1,cellsize-2,cellsize-2))
-                    move = police.render(str(cartas[index]),1,gris)
-                    scr.blit(move,move.get_rect(center=(r.center)))
-                    pygame.display.update(r)
-                
-                    if primcarta is None: 
-                        primcarta = index 
-                        firstr = r 
-                        continue
-                    
-                    if cartas[index] == cartas[primcarta]:
-                        scr.fill(verde,r,special_flags=pygame.BLEND_MIN)
-                        scr.fill(verde,firstr,special_flags=pygame.BLEND_MIN)
-                        pygame.time.wait(500)
-                        pygame.display.update((r,firstr))
-                        cartas[index] = cartas[primcarta] = None
-                    
-                    else:
-                        vidas -=1
-                        pygame.time.wait(500)
-                        pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
-                        
-                        if vidas == 0:
-                            play_again()
-                    
-                    primcarta = None
-        else:
-            pygame.time.wait(500)
-        if play_again(): continue
-        break
+		while any(cartas):
+			e = pygame.event.wait()
+			if e.type == pygame.QUIT: break
+			elif e.type == pygame.USEREVENT:
+				secondes += 1
+				pygame.display.set_caption(str(secondes))
+			elif e.type == pygame.MOUSEBUTTONDOWN:
+				push.play()
+				index = e.pos[1]//cellsize*ncelx+e.pos[0]//cellsize
+				if cartas[index] and index!=primcarta:
+					r = scr.fill(blanco,(index%ncelx*cellsize+1,index//ncelx*cellsize+1,cellsize-2,cellsize-2))
+					move = police.render(str(cartas[index]),1,gris)
+					scr.blit(move,move.get_rect(center=(r.center)))
+					pygame.display.update(r)
+				
+					if primcarta is None: 
+						primcarta = index 
+						firstr = r 
+						continue
+					
+					if cartas[index] == cartas[primcarta]:
+						scr.fill(verde,r,special_flags=pygame.BLEND_MIN)
+						scr.fill(verde,firstr,special_flags=pygame.BLEND_MIN)
+						pygame.time.wait(500)
+						pygame.display.update((r,firstr))
+						cartas[index] = cartas[primcarta] = None
+					
+					else:
+						vidas -=1
+						pygame.time.wait(500)
+						pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
+						
+						if vidas == 0:
+							play_again()
+					
+					primcarta = None
+		else:
+			pygame.time.wait(500)
+		if play_again(): continue
+		break
 
-    pygame.quit()
-    
+	pygame.quit()
+	
 def inva_game():
     pygame.mixer.music.stop()
     lose = pygame.mixer.Sound("sound/gameover.wav")
@@ -873,15 +1148,15 @@ def main():
     pygame.mixer.music.play(-1)
 
     menu_game = [
-        ("Invasores", inva_game),
-        ("Memorama", memo_game),
-        ("Matematicas", mate_game),
-        ("Abecedario", abc_game),
-        ("Opciones", options),
-        ("Creditos", credits),
-        ("Puntuacion", highscore),
-        ("Salir", exit_game)
-        ]
+		("Invasores", inva_game),
+		("Memorama", memo_game),
+		("Matematicas", mate_game),
+		("Abecedario", abc_game),
+		("Opciones", options),
+		("Creditos", credits),
+		("Puntuacion", highscore),
+		("Salir", exit_game)
+		]
 
     screen = pygame.display.set_mode(size)
     background = pygame.image.load("images/background.jpg").convert()
@@ -901,3 +1176,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
