@@ -132,7 +132,22 @@ def abc_game():
     lose = pygame.mixer.Sound("sound/gameover.wav")
     pygame.mixer.music.load("sound/abc_sound.mp3")
     pygame.mixer.music.play(-1)
+    goto = True
+    screen = pygame.display.set_mode((800, 504), 0, 32)
     global j
+
+    def Ayuda(screen):      
+        Instrucciones(screen, ["CONTROLES:",
+        "",
+        "Teclas: Letras",                 
+        "",
+        "OBJETIVO:",
+        "Teclea todo el abecedario para ganar",
+        "Si te equivocas, empezaras de nuevo y el",
+        "juego te dara una ayuda, crees poder",
+        "lograrlo?"])
+        goto = False
+
 
     class Pantalla:
 
@@ -292,6 +307,9 @@ def abc_game():
                         perdio = True
             pygame.quit()
 
+    while goto:
+        help = Ayuda(screen)
+        goto = False
     j = Juego()
 
 def mate_game():
@@ -299,7 +317,21 @@ def mate_game():
     lose = pygame.mixer.Sound("sound/gameover.wav")
     pygame.mixer.music.load("sound/mate_music.mp3")
     pygame.mixer.music.play(-1)
+    goto = True
+    screen = pygame.display.set_mode((800, 504), 0, 32)
     global py
+
+    def Ayuda(screen):      
+        Instrucciones(screen, ["CONTROLES:",
+        "",
+        "Teclas: Numeros",                 
+        "",
+        "OBJETIVO:",
+        "Realiza las operaciones para avanzar!!",
+        "Si te equivocas, no importa el juego",
+        "te dara una ayuda, cuantos puntos",
+        "obtendras?"])
+        goto = False
 
     class Program():
         def __init__(self):
@@ -368,10 +400,14 @@ def mate_game():
                 self.operation = "/"
                 self.end_option()
 
-        def draw(self,h):
+        def draw(self,algo = True):
                 for i in xrange(len(self.objects[h])):
                         self.screen.blit(self.objects[h][i].format,self.objects[h][i].xy)
-                        
+
+    while goto:
+        help = Ayuda(screen)
+        goto = False
+
     py = Program()
 
     class Numbers():
