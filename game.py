@@ -1044,6 +1044,7 @@ def main():
         escritura.update(events)
         display.update()
         sprites.update()
+        print "hola"
         escritura.draw(screen)
         sprites.draw(screen)
         pygame.display.flip()
