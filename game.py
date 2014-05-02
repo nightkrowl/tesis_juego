@@ -10,13 +10,14 @@ import random
 import time
 import os
 from Instrucciones import *
+from highscores import *
 
 size = width, height = 500, 400
 
 class Opcion:
 
     def __init__(self, font, titulo, x, y, paridad, funcion_asignada):
-        self.imagen_normal = font.render(titulo, 1, (255, 255, 255))
+        self.imagen_normal = font.render(titulo, 1, (4, 4, 4))
         self.imagen_destacada = font.render(titulo, 1, (200, 0, 0))
         self.image = self.imagen_normal
         self.rect = self.image.get_rect()
@@ -26,7 +27,7 @@ class Opcion:
         self.x = float(self.rect.x)
 
     def update(self):
-        destino_x = 105
+        destino_x = 120
         self.x += (destino_x - self.x) / 5.0
         self.rect.x = int(self.x)
 
@@ -70,8 +71,8 @@ class Menu:
     def __init__(self, opciones):
         self.opciones = []
         font = pygame.font.Font('font/Dirty Harry.ttf', 22)
-        x = 90
-        y = 140
+        x = 100
+        y = 120
         paridad = 1
 
         self.cursor = Cursor(x - 30, y, 28)
@@ -665,9 +666,6 @@ def inva_game():
     white = (255, 255, 255)
     algo = True
 
-    def highscore(score):
-        Guardar(score)    
-
     def Ayuda(screen):
         Instrucciones(screen, ["CONTROLES:",
         "",
@@ -700,10 +698,10 @@ def inva_game():
         prueba += 1
         y_alien2 = randint(0, 404)
 
-    points = 0
+    points = 6544
     level = 0
     vidas = 3
-    velocity = 2
+    velocity = 10
     errorState = False
 
     pygame.mixer.init(44100, -16, 2, 1024)
@@ -743,6 +741,8 @@ def inva_game():
             if y_alien == y_alien2:
                 y_alien2 = randint(0, 404)
             lose.play()
+            pts = Game(points)
+            pts.run()
             pygame.mixer.music.stop()
             main()
 
@@ -752,10 +752,10 @@ def inva_game():
         pygame.mouse.set_visible(False)
 
         screen.blit(pygame.image.load("images/background_game.png"), (0, 0))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Puntos: " + str(points), True, black), (650, 450))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(level), True, black), (650, 420))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Verde", True, black), (650, 390))
-        screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas:" + str(vidas), True, black), (650, 360))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Puntos: " + str(points), True, black), (600, 450))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(level), True, black), (600, 420))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Verde", True, black), (600, 390))
+        screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas:" + str(vidas), True, black), (600, 360))
 
         if (x_click in range(x_alien * velocity - 30, x_alien * velocity + 30) and y_click in range(y_alien - 30, y_alien + 30)):
 
@@ -779,8 +779,11 @@ def inva_game():
             lose.play()
             pygame.mixer.music.stop()
             print "testeo: ", prueba
+            pts = Game()
+            pts.run()
             main()
-        screen.blit(pygame.image.load("images/verde.png").convert_alpha(), (x_alien * velocity, y_alien))
+
+        screen.blit(pygame.image.load("images/alien.png").convert_alpha(), (x_alien * velocity, y_alien))
 
         if (x_click in range(x_alien2 * velocity - 30, x_alien2 * velocity + 30) and y_click in range(y_alien2 - 30, y_alien2 + 30)):
 
@@ -826,49 +829,8 @@ def inva_game():
 
         pygame.display.update()
         
-def highscore():
-print "Puntajes"
-
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode((Ancho, Alto))
-    pygame.display.set_caption("Guardar Puntos; Escribe tu nombre")
-    pygame.mouse.set_visible(False)
-    sprites = pygame.sprite.RenderClear()
-    boton = OKButton((400,400))
-    pygame.init()
-    mira=Mira()
-    sprites.add(mira)
-    sprites.add(boton)
-    escritura = Escritura()
-    salir = False
-    while salir == False:
-        events = pygame.event.get()
-        for event in events:
-            if event.type == QUIT:
-                salir = True
-        if event.type == MOUSEBUTTONDOWN:
-            if event.button == 1 and pygame.sprite.collide_rect(mira, boton):
-                print "\n!!!!!!!!!!!!Contanto contacto!!!!!!!!!!!!\n"
-                puntajes.insert(0,[3000,escritura.que_escribio()])
-                puntajes.sort() #Ordena los elementos de menor a mayor
-                puntajes.reverse() #Los colocamos de mayor a menor
-                cuantos_hay = len(puntajes)
-                puntajes.remove(puntajes[cuantos_hay-1])#asi elimina el ultimo de la lista
-                Guardar(puntajes)
-                Lospuntajes()
-        escritura.update(events)
-        display.update()
-        sprites.update()
-        print "hola"
-        escritura.draw(screen)
-        sprites.draw(screen)
-        pygame.display.flip()
-
-if __name__ == '__main__': 
-    main()
-    print "Puntos"
-
+def puntuaciones():
+    print "putnos"
 
 def options():
     print "Mustra opciones."
@@ -896,9 +858,8 @@ def credits():
     #~ utiliser '\\' pour aligner les lignes de texte
     font = pygame.font.Font('font/Dirty Harry.ttf', 13)
     color = 0xa0a0a000
-
+    
     credit(text,font,color)
-
 
 def exit_game():
     print "Saliendo del programa."
@@ -922,12 +883,12 @@ def main():
         ("Abecedario", abc_game),
         ("Opciones", options),
         ("Creditos", credits),
-        ("Puntuacion", highscore),
+        ("Puntuacion", puntuaciones),
         ("Salir", exit_game)
         ]
 
     screen = pygame.display.set_mode(size)
-    background = pygame.image.load("images/background.jpg").convert()
+    background = pygame.image.load("images/background_inva.jpg").convert()
     menu = Menu(menu_game)
 
     while True:

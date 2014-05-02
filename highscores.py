@@ -4,11 +4,10 @@ import pygame
 from pygame.locals import *
 
 class Score(pygame.sprite.Sprite):
-    """A sprite for the score."""
 
-    def __init__(self, xy):
+    def __init__(self, xy,points):
         pygame.sprite.Sprite.__init__(self)
-        self.score = 3456
+        self.score = points
 
 class NameSprite(pygame.sprite.Sprite):
 
@@ -39,25 +38,26 @@ class NameSprite(pygame.sprite.Sprite):
 
 class Game(object):
 
-    def __init__(self):
+    def __init__(self,points):
+        print points
         pygame.init()
         self.window = pygame.display.set_mode((520, 545))
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("Pygame Tutorial 4 - Breakout")
         pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
-        self.background = pygame.image.load(os.path.join('images','background.jpg'))
+        self.background = pygame.image.load(os.path.join('images','background.JPG'))
         self.window.blit(self.background, (0,0))
         pygame.display.flip()
         self.isReset = True
         self.playing = True
         self.enteringname = False
-        self.score = Score((75, 575))
+        self.score = Score((75, 575), points)
         self.namesprites = pygame.sprite.RenderUpdates()
         self.handleHighScores()
 
 
     def run(self):
-        print 'Entrando '
+        print 'Empezando'
 
         running = True
         while running:
@@ -150,15 +150,15 @@ class Game(object):
         else:
             f = open(highscorefile, 'w')
             f.write("""obed:10000
-marlen:9000
-aaa:8000
-bbb:7000
-ccc:6000
-ddd:5000
-eee:4000
-fff:3000
-ggg:2000
-hhh:1000""")
+elisa:9000
+marlen:8000
+GGG:7000
+FFF:6000
+EEE:5000
+DDD:4000
+CCC:3000
+BBB:2000
+AAA:1000""")
             f.close()
             return self.parseHighScores()
 
@@ -182,7 +182,3 @@ hhh:1000""")
                 pygame.draw.rect(self.window, color, pygame.Rect(d, scorerect.centery, 5, 5))
 
         pygame.display.flip()
-
-if __name__ == '__main__':
-    game = Game()
-    game.run()
