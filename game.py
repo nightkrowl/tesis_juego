@@ -158,6 +158,7 @@ def abc_game():
         P_ALTO = 250
         Y_INICIAL = 70
         COLOR_OK = (0, 255, 0)
+        points = 0
         def __init__(self):
             pygame.font.init()
             self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
@@ -203,6 +204,7 @@ def abc_game():
             pygame.display.update()
             pygame.event.pump()
             self.clock.tick(30)
+
             
         def update(self):
             self.refresh()
@@ -214,6 +216,8 @@ def abc_game():
             self.pantalla.blit(txt1, ((self.P_ANCHO - txt1.get_rect().w)/2, 50))
             self.pantalla.blit(txt2, ((self.P_ANCHO - txt2.get_rect().w)/2, 100))
             self.refresh()
+            pts = Game(points)
+            pts.run()
             
         def setCuadraditos(self):
             linea = pygame.Surface((25, 5))
@@ -295,12 +299,15 @@ def abc_game():
                 if r not in (True, False):
                     n = self.check(r)
                     if n:
-                        if n == 'g':
+                        if n == setcharOK'g':
+                            points += 500
                             self.gano()
                             break
                         else:
+                            points += 500
                             self.pantalla.setcharOK(self.getDecAnt())                        
                     else:
+                        points -= 200
                         self.pantalla.setcharMAL(self.getDecActual())
                         self.pantalla.update()
                         pygame.time.wait(2000)                        
@@ -319,6 +326,7 @@ def mate_game():
     pygame.mixer.music.load("sound/mate_music.mp3")
     pygame.mixer.music.play(-1)
     goto = True
+    poitns = 0
     screen = pygame.display.set_mode((800, 504), 0, 32)
     global py
 
@@ -468,6 +476,7 @@ def mate_game():
                             correct = str(first_number.rand - second_number.rand)
                     if py.answer == correct:
                             if not once:
+                                    points += 500
                                     py.right += 1
                                     selec = random.randint(1,4)
                                     if selec == 1:
@@ -487,6 +496,7 @@ def mate_game():
                     elif py.answer != correct:
                             if len(str(correct)) <= len(py.answer):
                                     if not once:
+                                            points -= 200
                                             py.wrong += 1
                                             selec = random.randint(1,4)
                                             once = 1
@@ -508,6 +518,8 @@ def mate_game():
                                         py.answer = py.answer[0:-1]
                                         py.screen.blit(py.background_image,[0,0])
                                     elif event.key == pygame.K_ESCAPE:
+                                        pts = Game(points)
+                                        pts.run()
                                         main()
 
                             py.screen.blit(first_number.format,first_number.xy)
@@ -556,6 +568,7 @@ def memo_game():
     ncely =  4
     vidas =  20
     cellsize = 80
+    points = 0
     orange = (230, 95, 0)
 
     set_ = list("1234567890")
@@ -573,6 +586,8 @@ def memo_game():
         algo = False
 
     def play_again():
+        pts = Game(points)
+        pts.run()
         pygame.mixer.music.stop()
         main()
         #texto = police.render('click para jugar otra vez',1,gris,verde)
@@ -635,6 +650,7 @@ def memo_game():
                         continue
                     
                     if cartas[index] == cartas[primcarta]:
+                        points += 500
                         scr.fill(verde,r,special_flags=pygame.BLEND_MIN)
                         scr.fill(verde,firstr,special_flags=pygame.BLEND_MIN)
                         pygame.time.wait(500)
@@ -643,6 +659,7 @@ def memo_game():
                     
                     else:
                         vidas -=1
+                        points -= 200 
                         pygame.time.wait(500)
                         pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
                         
