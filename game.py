@@ -299,7 +299,7 @@ def abc_game():
                 if r not in (True, False):
                     n = self.check(r)
                     if n:
-                        if n == setcharOK'g':
+                        if n == setcharOK:
                             points += 500
                             self.gano()
                             break
@@ -715,7 +715,7 @@ def inva_game():
         prueba += 1
         y_alien2 = randint(0, 404)
 
-    points = 6544
+    points = 7853
     level = 0
     vidas = 3
     velocity = 10
