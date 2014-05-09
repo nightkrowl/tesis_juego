@@ -38,8 +38,9 @@ class NameSprite(pygame.sprite.Sprite):
 
 class Game(object):
 
-    def __init__(self,points):
+    def __init__(self,points,highscorefile):
         print points
+        print highscorefile
         pygame.init()
         self.window = pygame.display.set_mode((520, 545))
         self.clock = pygame.time.Clock()
@@ -53,7 +54,7 @@ class Game(object):
         self.enteringname = False
         self.score = Score((75, 575), points)
         self.namesprites = pygame.sprite.RenderUpdates()
-        self.handleHighScores()
+        self.handleHighScores(highscorefile)
 
 
     def run(self):
@@ -103,8 +104,8 @@ class Game(object):
                             pass
         return True
 
-    def handleHighScores(self):
-        highscores = self.parseHighScores()
+    def handleHighScores(self,highscorefile):
+        highscores = self.parseHighScores(highscorefile)
 
         if self.score.score > int(highscores[-1][1]):
             self.enteringname = True
@@ -120,7 +121,7 @@ class Game(object):
         self.window.blit(self.background, (0,0))
         pygame.display.flip()
 
-        highscores = self.parseHighScores()
+        highscores = self.parseHighScores(high)
 
         newscores = []
         for name, score in highscores:
@@ -130,7 +131,14 @@ class Game(object):
             newscores.append((name, score))
         newscores = newscores[0:10]
 
-        highscorefile = 'highscores.txt'
+        if highscorefile == 1:
+            highscorefile = 'highscores.txt'
+        elif highscorefile == 2:
+            highscorefile = 'highscores_memo.txt'
+        elif highscorefile == 3:
+            highscorefile = 'highscores_mate.txt'
+        elif highscorefile == 4:
+            highscorefile = 'highscores_abc.txt'
         f = open(highscorefile, 'w')
         for name, score in newscores:
             f.write("%s:%s\n" % (name, score))
@@ -138,8 +146,16 @@ class Game(object):
 
         self.showHighScores(newscores)
 
-    def parseHighScores(self):
-        highscorefile = 'highscores.txt'
+    def parseHighScores(self,highscorefile):
+        if highscorefile == 1:
+            highscorefile = 'highscores.txt'
+        elif highscorefile == 2:
+            highscorefile = 'highscores_memo.txt'
+        elif highscorefile == 3:
+            highscorefile = 'highscores_mate.txt'
+        elif highscorefile == 4:
+            highscorefile = 'highscores_abc.txt'
+        
         if os.path.isfile(highscorefile):
             f = open(highscorefile, 'r')
             lines = f.readlines()
@@ -160,7 +176,7 @@ CCC:3000
 BBB:2000
 AAA:1000""")
             f.close()
-            return self.parseHighScores()
+            return self.parseHighScores(high)
 
     def showHighScores(self, scores):
         font = pygame.font.Font(None, 35)

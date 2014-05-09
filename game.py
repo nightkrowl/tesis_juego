@@ -135,7 +135,8 @@ def abc_game():
     pygame.mixer.music.play(-1)
     goto = True
     screen = pygame.display.set_mode((800, 504), 0, 32)
-    global j
+    global j 
+    global points
 
     def Ayuda(screen):      
         Instrucciones(screen, ["CONTROLES:",
@@ -158,7 +159,7 @@ def abc_game():
         P_ALTO = 250
         Y_INICIAL = 70
         COLOR_OK = (0, 255, 0)
-        points = 0
+        points = 5678
         def __init__(self):
             pygame.font.init()
             self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
@@ -247,6 +248,8 @@ def abc_game():
                         return str(char)
             teclas = pygame.key.get_pressed()
             if teclas[K_ESCAPE]:
+                pts = Game(points, highscorefile=4)
+                pts.run()
                 return False
             while self.iniciado == False:
                 self.iniciado = True
@@ -568,7 +571,7 @@ def memo_game():
     ncely =  4
     vidas =  20
     cellsize = 80
-    points = 0
+    points = 1234
     orange = (230, 95, 0)
 
     set_ = list("1234567890")
@@ -586,7 +589,7 @@ def memo_game():
         algo = False
 
     def play_again():
-        pts = Game(points)
+        pts = Game(points,highscorefile=2)
         pts.run()
         pygame.mixer.music.stop()
         main()
@@ -659,7 +662,7 @@ def memo_game():
                     
                     else:
                         vidas -=1
-                        points -= 200 
+                        points -= 200
                         pygame.time.wait(500)
                         pygame.display.update((scr.fill(negro,r),scr.fill(negro,firstr)))
                         
