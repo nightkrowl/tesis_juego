@@ -55,15 +55,15 @@ class Game(object):
         self.score = Score((75, 575), points)
         self.namesprites = pygame.sprite.RenderUpdates()
         self.handleHighScores(highscorefile)
+        self.run(highscorefile)
 
-
-    def run(self):
+    def run(self,highscorefile):
         print 'Empezando'
 
         running = True
         while running:
             self.clock.tick(60)
-            running = self.handleEvents()
+            running = self.handleEvents(highscorefile)
             pygame.display.set_caption('Puntuaciones')
 
             if self.enteringname:
@@ -80,7 +80,7 @@ class Game(object):
 
         print 'Saliendo'
 
-    def handleEvents(self):
+    def handleEvents(self, highscorefile):
         for event in pygame.event.get():
             if event.type == QUIT:
                 return False
@@ -93,7 +93,7 @@ class Game(object):
                     if event.key == K_BACKSPACE:
                         self.namesprite.removeLetter()
                     elif event.key == K_RETURN:
-                        self.nameEntered()
+                        self.nameEntered(highscorefile)
 
                     else:
                         try:
@@ -114,14 +114,14 @@ class Game(object):
         else:
             self.showHighScores(highscores)
 
-    def nameEntered(self):
+    def nameEntered(self,highscorefile):
         self.enteringname = False
         username = self.namesprite.text
 
         self.window.blit(self.background, (0,0))
         pygame.display.flip()
 
-        highscores = self.parseHighScores(high)
+        highscores = self.parseHighScores(highscorefile)
 
         newscores = []
         for name, score in highscores:
@@ -139,12 +139,14 @@ class Game(object):
             highscorefile = 'highscores_mate.txt'
         elif highscorefile == 4:
             highscorefile = 'highscores_abc.txt'
+
         f = open(highscorefile, 'w')
         for name, score in newscores:
             f.write("%s:%s\n" % (name, score))
         f.close()
 
         self.showHighScores(newscores)
+        return self.parseHighScores(highscorefile)
 
     def parseHighScores(self,highscorefile):
         if highscorefile == 1:
@@ -176,7 +178,7 @@ CCC:3000
 BBB:2000
 AAA:1000""")
             f.close()
-            return self.parseHighScores(high)
+            return self.parseHighScores(highscorefile)
 
     def showHighScores(self, scores):
         font = pygame.font.Font(None, 35)

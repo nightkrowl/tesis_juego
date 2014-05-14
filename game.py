@@ -135,8 +135,7 @@ def abc_game():
     pygame.mixer.music.play(-1)
     goto = True
     screen = pygame.display.set_mode((800, 504), 0, 32)
-    global j 
-    global points
+    global j
 
     def Ayuda(screen):      
         Instrucciones(screen, ["CONTROLES:",
@@ -159,7 +158,6 @@ def abc_game():
         P_ALTO = 250
         Y_INICIAL = 70
         COLOR_OK = (0, 255, 0)
-        points = 5678
         def __init__(self):
             pygame.font.init()
             self.pantalla = pygame.display.set_mode((self.P_ANCHO, self.P_ALTO))
@@ -210,15 +208,14 @@ def abc_game():
         def update(self):
             self.refresh()
             
-        def gano(self):
+        def gano(self, points):
             self.limpiar()
             txt1 = self.fontG.render("Felicidades!", True, self.COLOR_NEU)
             txt2 = self.fontC.render("Te aprendiste el abecedario.", True, self.COLOR_NEU)
             self.pantalla.blit(txt1, ((self.P_ANCHO - txt1.get_rect().w)/2, 50))
             self.pantalla.blit(txt2, ((self.P_ANCHO - txt2.get_rect().w)/2, 100))
             self.refresh()
-            pts = Game(points)
-            pts.run()
+            pts = Game(points,4)
             
         def setCuadraditos(self):
             linea = pygame.Surface((25, 5))
@@ -229,7 +226,8 @@ def abc_game():
         
 
     class Teclado:
-
+        global points
+        points = 5434
         def __init__(self):
             self.iniciado = False
             
@@ -248,8 +246,7 @@ def abc_game():
                         return str(char)
             teclas = pygame.key.get_pressed()
             if teclas[K_ESCAPE]:
-                pts = Game(points, highscorefile=4)
-                pts.run()
+                pts = Game(points, 4)
                 return False
             while self.iniciado == False:
                 self.iniciado = True
@@ -258,6 +255,7 @@ def abc_game():
     class Juego:
 
         Abecedario = "abcdefghijklmnopqrstuvwxyz"
+        points = 5675
         
         def __init__(self):
             self.teclado = Teclado()
@@ -304,7 +302,7 @@ def abc_game():
                     if n:
                         if n == setcharOK:
                             points += 500
-                            self.gano()
+                            self.gano(points)
                             break
                         else:
                             points += 500
@@ -329,7 +327,6 @@ def mate_game():
     pygame.mixer.music.load("sound/mate_music.mp3")
     pygame.mixer.music.play(-1)
     goto = True
-    poitns = 0
     screen = pygame.display.set_mode((800, 504), 0, 32)
     global py
 
@@ -368,7 +365,7 @@ def mate_game():
                 self.blue = (0,0,255)
                 self.green = (0,255,0)
                 self.red = (255,0,0)
-                #configuration
+                #configuracion
                 self.clock = pygame.time.Clock()
                 self.background_image = pygame.image.load("images/backmate.png").convert()
                 pygame.font.init()
@@ -431,6 +428,7 @@ def mate_game():
     pygame.display.set_caption("Matematicas")
 
     selec = random.randint(1,4)
+    puntos = 4242
 
     while True:
             py.screen.blit(py.background_image,[0,0])
@@ -479,7 +477,7 @@ def mate_game():
                             correct = str(first_number.rand - second_number.rand)
                     if py.answer == correct:
                             if not once:
-                                    points += 500
+                                    puntos += 500
                                     py.right += 1
                                     selec = random.randint(1,4)
                                     if selec == 1:
@@ -499,7 +497,7 @@ def mate_game():
                     elif py.answer != correct:
                             if len(str(correct)) <= len(py.answer):
                                     if not once:
-                                            points -= 200
+                                            puntos -= 200
                                             py.wrong += 1
                                             selec = random.randint(1,4)
                                             once = 1
@@ -521,8 +519,7 @@ def mate_game():
                                         py.answer = py.answer[0:-1]
                                         py.screen.blit(py.background_image,[0,0])
                                     elif event.key == pygame.K_ESCAPE:
-                                        pts = Game(points)
-                                        pts.run()
+                                        pts = Game(puntos,3)
                                         main()
 
                             py.screen.blit(first_number.format,first_number.xy)
@@ -589,8 +586,7 @@ def memo_game():
         algo = False
 
     def play_again():
-        pts = Game(points,highscorefile=2)
-        pts.run()
+        pts = Game(points, 2)
         pygame.mixer.music.stop()
         main()
         #texto = police.render('click para jugar otra vez',1,gris,verde)
@@ -634,6 +630,10 @@ def memo_game():
 
         while any(cartas):
             e = pygame.event.wait()
+            if e.type == pygame.KEYDOWN:
+                if e.key == pygame.K_ESCAPE:
+                    pts = Game(points,2)
+                    main()
             if e.type == pygame.QUIT: break
             elif e.type == pygame.USEREVENT:
                 secondes += 1
