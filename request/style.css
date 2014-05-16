@@ -73,7 +73,7 @@ hr {
 	margin: 0 auto;
 	padding: 50px 0 0 0;
 	font-family: "Trebuchet MS", "Times New Roman", Arial, Times, serif;
-	background: url(images/img04.jpg) no-repeat left 20%;
+	background: url(images/img04.png) no-repeat left 20%;
 }
 
 #header h1, #header p {
@@ -265,7 +265,7 @@ hr {
 	padding-left: 40px;
 	height: 35px;
 	font-size: 18px;
-	background: url(images/img08.gif) no-repeat left top;
+	background: url(images/img08.jpg) no-repeat left top;
 }
 
 #sidebar a {

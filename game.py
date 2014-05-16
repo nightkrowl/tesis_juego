@@ -12,6 +12,7 @@ import os
 from Instrucciones import *
 from highscores import *
 
+
 size = width, height = 500, 400
 
 class Opcion:
@@ -718,7 +719,7 @@ def inva_game():
         prueba += 1
         y_alien2 = randint(0, 404)
 
-    points = 7853
+    points = 2300
     level = 0
     vidas = 3
     velocity = 10
@@ -761,8 +762,7 @@ def inva_game():
             if y_alien == y_alien2:
                 y_alien2 = randint(0, 404)
             lose.play()
-            pts = Game(points)
-            pts.run()
+            pts = Game(points,1)
             pygame.mixer.music.stop()
             main()
 
@@ -771,6 +771,16 @@ def inva_game():
         screen.fill(black)
         pygame.mouse.set_visible(False)
 
+        m1 = pygame.image.load("images/smoke_puff_0001.png")
+        m2 = pygame.image.load("images/smoke_puff_0002.png")
+        m3 = pygame.image.load("images/smoke_puff_0003.png")
+        m4 = pygame.image.load("images/smoke_puff_0004.png")
+        m5 = pygame.image.load("images/smoke_puff_0005.png")
+        m6 = pygame.image.load("images/smoke_puff_0006.png")
+        m7 = pygame.image.load("images/smoke_puff_0007.png") 
+
+        smokeCurrentImage = 1
+
         screen.blit(pygame.image.load("images/background_game.png"), (0, 0))
         screen.blit(pygame.font.SysFont("tahoma", 30).render("Puntos: " + str(points), True, black), (600, 450))
         screen.blit(pygame.font.SysFont("tahoma", 30).render("Nivel: " + str(level), True, black), (600, 420))
@@ -778,8 +788,21 @@ def inva_game():
         screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas:" + str(vidas), True, black), (600, 360))
 
         if (x_click in range(x_alien * velocity - 30, x_alien * velocity + 30) and y_click in range(y_alien - 30, y_alien + 30)):
+            for smokeCurrentImage in range(7):
+                if smokeCurrentImage==1:
+                    screen.blit(m1,(x_click-45,y_click-50))
+                if smokeCurrentImage==2:
+                    screen.blit(m2,(x_click-45,y_click-50))
+                if smokeCurrentImage==3:
+                    screen.blit(m3,(x_click-45,y_click-50))
+                if smokeCurrentImage==4:
+                    screen.blit(m4,(x_click-45,y_click-50))
+                if smokeCurrentImage==5:
+                    screen.blit(m5,(x_click-45,y_click-50))
+                if smokeCurrentImage==6:
+                    screen.blit(m6,(x_click-45,y_click-50))
 
-            points += 5
+            points += 100
             velocity += 1
             x_alien = 0
             y_alien = randint(50, 404)
@@ -791,16 +814,15 @@ def inva_game():
             if y_alien == y_alien2:
                 y_alien2 = randint(0, 404)
             
-        if points == 20:
+        if points == 2700:
             level += 1
-            velocity = 1
-            points = 0
+            velocity = 10
+            points = 2750
         if vidas == 0:
             lose.play()
             pygame.mixer.music.stop()
             print "testeo: ", prueba
-            pts = Game()
-            pts.run()
+            pts = Game(points,1)
             main()
 
         screen.blit(pygame.image.load("images/alien.png").convert_alpha(), (x_alien * velocity, y_alien))
@@ -848,7 +870,7 @@ def inva_game():
         screen.blit(pygame.image.load("images/scope.png").convert_alpha(), position)
 
         pygame.display.update()
-        
+
 def puntuaciones():
     print "putnos"
 
