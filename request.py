@@ -1,6 +1,7 @@
 import os
 import urllib2
 import urllib
+
 class EnhancedFile(file):
     def __init__(self, *args, **keyws):
         file.__init__(self, *args, **keyws)
@@ -27,3 +28,12 @@ theRequest = urllib2.Request(theUrl, theData)
 response = urllib2.urlopen(theRequest)
 
 theFile.close()
+
+url = 'http://www.someserver.com/somepage.html'
+values = {'id_poster' : 'some_poster_id',
+          'id_content' : 'some_content'}
+
+data = urllib.urlencode(values)
+req = urllib2.Request(url, data)
+response = urllib2.urlopen(req)
+the_page = response.read()
