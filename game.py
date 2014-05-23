@@ -108,9 +108,10 @@ class Menu:
         # procura que el cursor esté entre las opciones permitidas
         if self.seleccionado < 0:
             self.seleccionado = 0
+            print self.seleccionado
         elif self.seleccionado > self.total - 1:
             self.seleccionado = self.total - 1
-        
+            print self.seleccionado
         self.cursor.seleccionar(self.seleccionado)
 
         # indica si el usuario mantiene pulsada alguna tecla.
@@ -777,7 +778,9 @@ def inva_game():
         m4 = pygame.image.load("images/smoke_puff_0004.png")
         m5 = pygame.image.load("images/smoke_puff_0005.png")
         m6 = pygame.image.load("images/smoke_puff_0006.png")
-        m7 = pygame.image.load("images/smoke_puff_0007.png") 
+        m7 = pygame.image.load("images/smoke_puff_0007.png")
+        m8 = pygame.image.load("images/cien.png")  
+        m9 = pygame.image.load("images/cien.png")
 
         smokeCurrentImage = 1
 
@@ -788,7 +791,7 @@ def inva_game():
         screen.blit(pygame.font.SysFont("tahoma", 30).render("Vidas:" + str(vidas), True, black), (600, 360))
 
         if (x_click in range(x_alien * velocity - 30, x_alien * velocity + 30) and y_click in range(y_alien - 30, y_alien + 30)):
-            for smokeCurrentImage in range(7):
+            for smokeCurrentImage in range(10):
                 if smokeCurrentImage==1:
                     screen.blit(m1,(x_click-45,y_click-50))
                 if smokeCurrentImage==2:
@@ -801,6 +804,12 @@ def inva_game():
                     screen.blit(m5,(x_click-45,y_click-50))
                 if smokeCurrentImage==6:
                     screen.blit(m6,(x_click-45,y_click-50))
+                if smokeCurrentImage==7:
+                    screen.blit(m7,(x_click-45,y_click-50))
+                if smokeCurrentImage==8:
+                    screen.blit(m8,(x_click-100,y_click-100))
+                if smokeCurrentImage==9:
+                    screen.blit(m8,(x_click-100,y_click-110))
 
             points += 100
             velocity += 1
@@ -814,7 +823,7 @@ def inva_game():
             if y_alien == y_alien2:
                 y_alien2 = randint(0, 404)
             
-        if points == 2700:
+        if points == 2700:  
             level += 1
             velocity = 10
             points = 2750
@@ -907,6 +916,25 @@ def exit_game():
     print "Saliendo del programa."
     sys.exit(0)
 
+def back(menu):
+    if menu == 0:
+        background = pygame.image.load("images/background_inva.jpg").convert()
+    if menu == 1:
+        background = pygame.image.load("images/background_memo.jpg").convert()
+    if menu == 2:
+        background = pygame.image.load("images/background_mate.jpg").convert()
+    if menu == 3:
+        background = pygame.image.load("images/background_abc.jpg").convert()
+    if menu == 4:
+        background = pygame.image.load("images/background_nada.jpg").convert()
+    if menu == 5:
+        background = pygame.image.load("images/background_nada.jpg").convert()
+    if menu == 6:
+        background = pygame.image.load("images/background_nada.jpg").convert()
+    if menu == 7:
+        background = pygame.image.load("images/background_nada.jpg").convert()
+    return background
+
 def main():
     pygame.init()
     pygame.font.init()
@@ -930,16 +958,18 @@ def main():
         ]
 
     screen = pygame.display.set_mode(size)
-    background = pygame.image.load("images/background_inva.jpg").convert()
+    #background = pygame.image.load("images/background_inva.jpg").convert()
     menu = Menu(menu_game)
+
 
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 sys.exit(0)
-
-        screen.blit(background, (0, 0))
         menu.update(sound,ok)
+        background=back(menu.seleccionado)
+        #print(menu.seleccionado) 
+        screen.blit(background, (0, 0))
         menu.imprimir(screen)
 
         pygame.display.flip()
