@@ -137,7 +137,6 @@ def abc_game():
     pygame.mixer.music.play(-1)
     goto = True
     screen = pygame.display.set_mode((800, 504), 0, 32)
-    black = (0,0,0)
     global j
 
     def Ayuda(screen):      
@@ -208,7 +207,8 @@ def abc_game():
             self.clock.tick(30)
 
             
-        def update(self):
+        def update(self,points):
+            self.pantalla.blit(pygame.font.SysFont("tahoma", 20).render("Puntos:" + str(points), True, (0,0,0)), (70, 30))
             self.refresh()
             
         def gano(self, points):
@@ -229,8 +229,6 @@ def abc_game():
         
 
     class Teclado:
-        global points
-        points = 5434
         def __init__(self):
             self.iniciado = False
             
@@ -244,12 +242,12 @@ def abc_game():
                     char = None
                     if event.key >= 32 and event.key <= 126:
                         char = event.unicode
-                        #print char
+                        print char
                     if char is not None:
                         return str(char)
             teclas = pygame.key.get_pressed()
             if teclas[K_ESCAPE]:
-                pts = Game(points, 4)
+                pts = Game(self.points, 4)
                 return False
             while self.iniciado == False:
                 self.iniciado = True
@@ -258,8 +256,8 @@ def abc_game():
     class Juego:
 
         Abecedario = "abcdefghijklmnopqrstuvwxyz"
-        points = 5675
-        
+        points = 0
+
         def __init__(self):
             self.teclado = Teclado()
             self.pantalla = Pantalla()        
@@ -291,8 +289,7 @@ def abc_game():
         def main(self):
             while not self.teclado.iniciado:
                 self.teclado.update(False)
-                self.pantalla.blit(pygame.font.SysFont("tahoma", 30).render("BIEN!", True, j.black), (50, 270))
-                self.pantalla.update()
+                self.pantalla.update(self.points)
             self.pantalla.iniciar()
             self.reiniciar()
             r = True
@@ -300,21 +297,20 @@ def abc_game():
             while r:
                 r = self.teclado.update(perdio)
                 perdio = False
-                self.pantalla.update()
+                self.pantalla.update(self.points)
                 if r not in (True, False):
                     n = self.check(r)
                     if n:
-                        if n == setcharOK:
-                            points += 500
-                            self.gano(points)
+                        if n == "g":
+                            self.gano(self.points)
                             break
                         else:
-                            points += 500
+                            self.points += 300
                             self.pantalla.setcharOK(self.getDecAnt())                        
                     else:
-                        points -= 200
+                        self.points -= 100
                         self.pantalla.setcharMAL(self.getDecActual())
-                        self.pantalla.update()
+                        self.pantalla.update(self.points)
                         pygame.time.wait(2000)                        
                         self.reiniciar()
                         perdio = True
@@ -618,6 +614,8 @@ def memo_game():
 
     scr = pygame.display.set_mode((ncelx*cellsize,ncely*cellsize))
     scrrect = scr.get_rect()
+    scr.blit(pygame.font.SysFont("tahoma", 20).render("Puntos:" + str(points), True, orange), (100,100))
+
 
     pygame.font.init()
     police = pygame.font.Font(None,int(cellsize//1.5))
@@ -641,8 +639,7 @@ def memo_game():
                     main()
             if e.type == pygame.QUIT: break
             elif e.type == pygame.USEREVENT:
-                secondes += 1
-                pygame.display.set_caption(str(secondes))
+                pygame.display.set_caption("Puntos: "+str(points))
             elif e.type == pygame.MOUSEBUTTONDOWN:
                 push.play()
                 index = e.pos[1]//cellsize*ncelx+e.pos[0]//cellsize
