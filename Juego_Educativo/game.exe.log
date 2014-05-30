@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "game.py", line 980, in <module>
+  File "game.py", line 970, in main
+  File "game.py", line 106, in update
+  File "game.py", line 45, in activar
+  File "game.py", line 322, in abc_game
+  File "game.py", line 264, in __init__
+  File "game.py", line 298, in main
+  File "game.py", line 250, in update
+AttributeError: Teclado instance has no attribute 'points'
+Traceback (most recent call last):
+  File "game.py", line 980, in <module>
+  File "game.py", line 970, in main
+  File "game.py", line 106, in update
+  File "game.py", line 45, in activar
+  File "game.py", line 741, in inva_game
+NameError: global name 'exit' is not defined
+Traceback (most recent call last):
+  File "game.py", line 980, in <module>
+  File "game.py", line 970, in main
+  File "game.py", line 106, in update
+  File "game.py", line 45, in activar
+  File "game.py", line 750, in inva_game
+  File "game.py", line 970, in main
+  File "game.py", line 106, in update
+  File "game.py", line 45, in activar
+  File "game.py", line 322, in abc_game
+  File "game.py", line 264, in __init__
+  File "game.py", line 298, in main
+  File "game.py", line 250, in update
+AttributeError: Teclado instance has no attribute 'points'
