@@ -1,171 +1,81 @@
-# This will create a dist directory containing the executable file, all the data
-# directories. All Libraries will be bundled in executable file.
+# RunMeToCreatePackage.py
+# Version 0.2
+# 2007/04/11
 #
-# Run the build process by entering 'pygame2exe.py' or
-# 'python pygame2exe.py' in a console prompt.
+# This program was created by Clint (HanClinto) Herron for the April 2007 PyWeek competition.
 #
-# To build exe, python, pygame, and py2exe have to be installed. After
-# building exe none of this libraries are needed.
-#Please Note have a backup file in a different directory as if it crashes you 
-#will loose it all!(I lost 6 months of work because I did not do this)
- 
- 
-try:
-    from distutils.core import setup
-    import py2exe, pygame
-    from modulefinder import Module
-    import glob, fnmatch
-    import sys, os, shutil
-    import operator
-except ImportError, message:
-    raise SystemExit,  "Unable to load module. %s" % message
- 
-#hack which fixes the pygame mixer and pygame font
-origIsSystemDLL = py2exe.build_exe.isSystemDLL # save the orginal before we edit it
-def isSystemDLL(pathname):
-    # checks if the freetype and ogg dll files are being included
-    if os.path.basename(pathname).lower() in ("libfreetype-6.dll", "libogg-0.dll","sdl_ttf.dll"): # "sdl_ttf.dll" added by arit.
-            return 0
-    return origIsSystemDLL(pathname) # return the orginal function
-py2exe.build_exe.isSystemDLL = isSystemDLL # override the default function with this one
- 
-class pygame2exe(py2exe.build_exe.py2exe): #This hack make sure that pygame default font is copied: no need to modify code for specifying default font
-    def copy_extensions(self, extensions):
-        #Get pygame default font
-        pygamedir = os.path.split(pygame.base.__file__)[0]
-        pygame_default_font = os.path.join(pygamedir, pygame.font.get_default_font())
- 
-        #Add font to list of extension to be copied
-        extensions.append(Module("pygame.font", pygame_default_font))
-        py2exe.build_exe.py2exe.copy_extensions(self, extensions)
- 
-class BuildExe:
-    def __init__(self):
-        #Name of starting .py
-        self.script = "game.py"
- 
-        #Name of program
-        self.project_name = "Juego_Educativo"
- 
-        #Project url
-        self.project_url = "about:none"
- 
-        #Version of program
-        self.project_version = "0.0"
- 
-        #License of the program
-        self.license = "MyApps License"
- 
-        #Auhor of program
-        self.author_name = "Me"
-        self.author_email = "example@example.com"
-        self.copyright = "Copyright (c) 2009 Me."
- 
-        #Description
-        self.project_description = "MyApps Description"
- 
-        #Icon file (None will use pygame default icon)
-        self.icon_file = None
- 
-        #Extra files/dirs copied to game
-        self.extra_datas = ["images","sound"]
- 
-        #Extra/excludes python modules
-        self.extra_modules = ["time","random","os"]
-        self.exclude_modules = []
+# It packages up basic games created with the Skellington app as EXE files.
+# It requires that py2exe be installed on your system.
+# Simply run this script, and it will take care of the rest.
+#
+# This source program is released into the public domain
+
+from distutils.core import setup
+import py2exe
+import sys
+import glob
+
+print "ATTENTION: THIS SCRIPT MUST BE RUN FROM WITHIN THE LIB DIRECTORY" # If someone would like to change this fact, I'm open to suggestions for the best way to do it.
+print ""
+print "INTRODUCTION:"
+print "This program packages up basic games created with the Skellington framework."
+print "It works on my machine for my game,"
+print "but I can't guarantee that it will work on yours for yours."
+print "Py2exe generally does a great job of automatically packaging dependencies,"
+print "but I can't guarantee you won't need to tweak with all of this."
+print "Still, I hope this give you a good push in the right direction.\n"
+
+# First step is to create a temporary launcher file, similar to the run_game.py file, that has the name of the EXE that they wish to create. This is a workaround to a problem where EXEs created with py2exe cannot be renamed to anything other than that which they were originally created with (or else they won't run properly). I don't know of the proper py2exe option to fix this.
+
+program_listing = "#This is an automatically generated file that can be deleted\nimport main\nmain.main()" # The basics needed to run a game packaged with the skellington
+filename = 'Slacker.py' # The name of the temporary launcher script to create
+
+filename = raw_input("What is the name of the executable that you wish to create (example: BubbleKong.exe or Slacker.exe) ? ")
+package_name = filename.replace(".exe", "") # Remove .exe from the end of the file (if it was added at all)
+filename = package_name + ".py" # Add .py to the end so that we can create this as a script file
+
+print "\nCreating our launcher script file '" + filename + "'\n"
+
+FILE = open(filename,"w")
+FILE.write(program_listing)
+FILE.close()
+
+# Now that we have our script file, we add command line arguments to execute py2exe with the proper bundle options
+sys.argv.append("py2exe")
+sys.argv.append("--bundle")
+sys.argv.append("2")
         
-        #DLL Excludes
-        self.exclude_dll = ['']
-        #python scripts (strings) to be included, seperated by a comma
-        self.extra_scripts = []
- 
-        #Zip file name (None will bundle files in exe instead of zip file)
-        self.zipfile_name = None
- 
-        #Dist directory
-        self.dist_dir ='dist'
- 
-    ## Code from DistUtils tutorial at http://wiki.python.org/moin/Distutils/Tutorial
-    ## Originally borrowed from wxPython's setup and config files
-    def opj(self, *args):
-        path = os.path.join(*args)
-        return os.path.normpath(path)
- 
-    def find_data_files(self, srcdir, *wildcards, **kw):
-        # get a list of all files under the srcdir matching wildcards,
-        # returned in a format to be used for install_data
-        def walk_helper(arg, dirname, files):
-            if '.svn' in dirname:
-                return
-            names = []
-            lst, wildcards = arg
-            for wc in wildcards:
-                wc_name = self.opj(dirname, wc)
-                for f in files:
-                    filename = self.opj(dirname, f)
- 
-                    if fnmatch.fnmatch(filename, wc_name) and not os.path.isdir(filename):
-                        names.append(filename)
-            if names:
-                lst.append( (dirname, names ) )
- 
-        file_list = []
-        recursive = kw.get('recursive', True)
-        if recursive:
-            os.path.walk(srcdir, walk_helper, (file_list, wildcards))
-        else:
-            walk_helper((file_list, wildcards),
-                        srcdir,
-                        [os.path.basename(f) for f in glob.glob(self.opj(srcdir, '*'))])
-        return file_list
- 
-    def run(self):
-        if os.path.isdir(self.dist_dir): #Erase previous destination dir
-            shutil.rmtree(self.dist_dir)
-        
-        #Use the default pygame icon, if none given
-        if self.icon_file == None:
-            path = os.path.split(pygame.__file__)[0]
-            self.icon_file = os.path.join(path, 'pygame.ico')
- 
-        #List all data files to add
-        extra_datas = []
-        for data in self.extra_datas:
-            if os.path.isdir(data):
-                extra_datas.extend(self.find_data_files(data, '*'))
-            else:
-                extra_datas.append(('.', [data]))
-        
+con_win_choice = 0
+print "Do you want to build (1) an app with a visible console, or (2) a Windows app with no visible console?"
+
+while (con_win_choice < 1 or con_win_choice > 2):
+        con_win_choice = input("Please enter either 1 or 2: ")
+
+if (con_win_choice == 1): # If they chose a console...
         setup(
-            cmdclass = {'py2exe': pygame2exe},
-            version = self.project_version,
-            description = self.project_description,
-            name = self.project_name,
-            url = self.project_url,
-            author = self.author_name,
-            author_email = self.author_email,
-            license = self.license,
- 
-            # targets to build
-            windows = [{
-                'script': self.script,
-                'icon_resources': [(0, self.icon_file)],
-                'copyright': self.copyright
-            }],
-            options = {'py2exe': {'optimize': 2, 'bundle_files': 1, 'compressed': True, \
-                                  'excludes': self.exclude_modules, 'packages': self.extra_modules, \
-                                  'dll_excludes': self.exclude_dll,
-                                  'includes': self.extra_scripts} },
-            zipfile = self.zipfile_name,
-            data_files = extra_datas,
-            dist_dir = self.dist_dir
-            )
-        
-        if os.path.isdir('build'): #Clean up build dir
-            shutil.rmtree('build')
- 
-if __name__ == '__main__':
-    if operator.lt(len(sys.argv), 2):
-        sys.argv.append('py2exe')
-    BuildExe().run() #Run generation
-    raw_input("Press any key to continue") #Pause to let user see that things ends 
+                console=[filename],
+                zipfile=None,
+                dist_dir=package_name,
+            data_files=[ ("data",   glob.glob("../data/*.*")),
+                                         (".", glob.glob("../README.txt"))]
+                )
+else: # If they chose to create a Windows app...
+        setup(
+                windows=[
+                        {
+                                "script": filename,
+                                "icon_resources": [(1, "py.ico")]
+                        }
+                ],
+                zipfile=None,
+                dist_dir=package_name,
+            data_files=[ ("data",   glob.glob("../data/*.*")),
+                                         (".", glob.glob("../README.txt"))]
+                )
+
+print "\n\nThe game has now been built."
+print "If there were any errors, they will be in the listing above."
+print "Assuming you followed the basic Skellington model,"
+print "your game and everything it needs will now be in the /lib/dist directory."
+print "Rename the dist directory to be what you want, then zip it up, and publish it."
+print "Enjoy!"

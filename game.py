@@ -137,6 +137,7 @@ def abc_game():
     pygame.mixer.music.play(-1)
     goto = True
     screen = pygame.display.set_mode((800, 504), 0, 32)
+    black = (0,0,0)
     global j
 
     def Ayuda(screen):      
@@ -290,6 +291,7 @@ def abc_game():
         def main(self):
             while not self.teclado.iniciado:
                 self.teclado.update(False)
+                self.pantalla.blit(pygame.font.SysFont("tahoma", 30).render("BIEN!", True, j.black), (50, 270))
                 self.pantalla.update()
             self.pantalla.iniciar()
             self.reiniciar()
@@ -531,7 +533,8 @@ def mate_game():
 
                             py.screen.blit(pygame.font.SysFont("tahoma", 30).render("BIEN!", True, py.green), (50, 270))
                             py.screen.blit(pygame.font.SysFont("tahoma", 30).render("Mal", True, py.red), (200, 270))
-                            
+                            py.screen.blit(pygame.font.SysFont("tahoma", 20).render("Puntos:" + str(puntos), True, py.black), (70, 30))
+
                             wrong_out = py.font1.render(str(py.wrong),True,py.black)
                             py.screen.blit(wrong_out,[200,330])
 
